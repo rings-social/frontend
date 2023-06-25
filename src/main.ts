@@ -4,6 +4,10 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { library } from '@fortawesome/fontawesome-svg-core'
 
+/* Fonts */
+import '@fontsource-variable/lora';
+import '@fontsource-variable/nunito';
+
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { 
     faArrowUp, 
@@ -21,9 +25,11 @@ import type { Settings } from './models/settings';
 
 import App from './App.vue'
 import router from './router'
+import { createAuth0 } from '@auth0/auth0-vue';
 
 const app = createApp(App)
 app.component('font-awesome-icon', FontAwesomeIcon)
+app.use(createPinia())
 
 library.add(faMagnifyingGlass);
 library.add(faChevronUp);
@@ -42,8 +48,16 @@ fetch('/settings.json').then((response) => {
     return response.json()
 }).then((settings: Settings) => {
     window._settings = settings
-    app.use(createPinia())
     app.use(router)
+    app.use(
+        createAuth0({
+          domain: window._settings.auth0Domain,
+          clientId: window._settings.auth0ClientId,
+          authorizationParams: {
+            redirect_uri: window.origin + '/login/callback',
+          }
+        })
+      );
     app.mount('#app')
 })
 

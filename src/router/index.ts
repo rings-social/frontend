@@ -10,6 +10,16 @@ const router = createRouter({
       component: HomeView
     },
     {
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/LoginView.vue')
+    },
+    {
+      path: '/createUser',
+      name: 'create-user',
+      component: () => import('../views/CreateUserView.vue'),
+    },
+    {
       path: '/r/:ringName',
       name: 'view-ring',
       component: () => import('../views/RingView.vue')

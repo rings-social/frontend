@@ -2,8 +2,54 @@
 import { RouterLink, RouterView } from 'vue-router'
 import SearchBar from '@/components/SearchBar.vue';
 import ProfilePicture from './components/ProfilePicture.vue';
+import { useUserStore } from './stores/user';
+import ActionButton from './components/ActionButton.vue';
+import { useAuth0 } from '@auth0/auth0-vue';
+import { watch } from 'vue';
+import type { User } from './models/models';
+import router from './router';
+const { loginWithRedirect, getAccessTokenSilently, user } = useAuth0();
+const userStore = useUserStore();
 
-const username = "john_doe";
+const hasAccessToken = userStore.idToken != null;
+
+
+watch(user, async (newUser) => {
+  if (newUser !== undefined) {
+    const accessToken = await getAccessTokenSilently(
+      {
+        detailedResponse: true,
+      }
+    );
+    userStore.idToken = accessToken.id_token;
+    await updateProfile();
+  }
+});
+
+const updateProfile = async() =>{
+  const response = await fetch(`${window._settings.baseUrl}/users/me`, {
+    headers: {
+      Authorization: `Bearer ${userStore.idToken}`,
+    },
+  });
+
+  if(response.status == 200){
+    const user: User = await response.json();
+    userStore.user = user;
+  } else if(response.status == 404){
+    // User doesn't exist, create it
+    // Redirect to user creation page
+    router.push('/createUser');
+  }
+};
+
+if(hasAccessToken && userStore.user.username == null) {
+  updateProfile();
+}
+
+const login = () => {
+  loginWithRedirect();
+}
 </script>
 
 <template>
@@ -17,13 +63,19 @@ const username = "john_doe";
       <SearchBar class="search-bar"/>
 
       <!-- User Profile Info -->
-      <div class="profile">
-        <!-- Get username from state: -->
-        <span class="username">{{ username }}</span>
+      <div class="profile" v-if="userStore.user.available">
+        <span class="username">{{ userStore.user.value.username }}</span>
         <ProfilePicture 
-          :username="username"
+          :username="userStore.user.value.username"
           class="profile-picture"
         />
+      </div>
+      <div class="user-creation" v-else-if="hasAccessToken">
+        <!-- Creating the profile -->
+        <ActionButton @click="$router.push('/createuser')">Create Profile</ActionButton>
+      </div>
+      <div class="login-area" v-else>
+        <ActionButton @click="login">Login</ActionButton>
       </div>
     </div>
   </header>
@@ -40,7 +92,7 @@ header {
   left: 0;
   right: 0;
   background-color: var(--color-header-background);
-  height: 80px;
+  height: 70px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
 
 
@@ -96,6 +148,10 @@ header {
     &:hover {
       cursor: pointer;
     }
+  }
+
+  .login-area {
+
   }
 }
 

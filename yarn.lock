@@ -2,6 +2,19 @@
 # yarn lockfile v1
 
 
+"@auth0/auth0-spa-js@^2.0.4":
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/@auth0/auth0-spa-js/-/auth0-spa-js-2.0.8.tgz#42a8e5aad043e66dbba2a8fadc086a46bf0d021f"
+  integrity sha512-qCgWZS58S69WCg2ybd+SDiaw3ahBVJ4/tSFWMtIpc//Fq8kRHGwMOmgpNKVAFrpHG0ck2oWFGrpylxoto8Z0mA==
+
+"@auth0/auth0-vue@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@auth0/auth0-vue/-/auth0-vue-2.2.0.tgz#5bf8265b12f1fb210b41abae75e72b0a0b0f4e91"
+  integrity sha512-a8kNj9wF/hJFD/izAZojOTNlny/sq3qvuV8KLUreoQ92uMQBYiHtuclVHbRqoYxl2bwCtFJccttEmyYW3gzHDA==
+  dependencies:
+    "@auth0/auth0-spa-js" "^2.0.4"
+    vue "^3.2.41"
+
 "@babel/parser@^7.20.15", "@babel/parser@^7.21.3":
   version "7.22.5"
   resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.22.5.tgz#721fd042f3ce1896238cf1b341c77eb7dee7dbea"
@@ -185,6 +198,16 @@
   version "8.43.0"
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.43.0.tgz#559ca3d9ddbd6bf907ad524320a0d14b85586af0"
   integrity sha512-s2UHCoiXfxMvmfzqoN+vrQ84ahUSYde9qNO1MdxmoEhyHWsfmwOpFlwYV+ePJEVc7gFnATGUi376WowX1N7tFg==
+
+"@fontsource-variable/lora@^5.0.4":
+  version "5.0.4"
+  resolved "https://registry.yarnpkg.com/@fontsource-variable/lora/-/lora-5.0.4.tgz#e520ad84ee385a1762f50759018aad9da6fc777f"
+  integrity sha512-Ah/Z2oRHlO7zQJMz6rNpWnvuNlWnd/5GwWoLyIk8A4nz0WgW00UCfyWi8kcTTf+NCF9mAdRtrpsLjy6WaoxUOg==
+
+"@fontsource-variable/nunito@^5.0.4":
+  version "5.0.4"
+  resolved "https://registry.yarnpkg.com/@fontsource-variable/nunito/-/nunito-5.0.4.tgz#0d755af666226e6c3a351f6a43c1bc43d45df5ea"
+  integrity sha512-kEj6CC7rT76Bmoe0Lq/ItfMtByBFySvETDQgowk6jToBk9R8E2KuYg6xuP82yynKyrf9wd20n/9sASFjE1IA4g==
 
 "@fortawesome/fontawesome-common-types@6.4.0":
   version "6.4.0"
@@ -395,6 +418,11 @@
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/@types/trusted-types/-/trusted-types-2.0.3.tgz#a136f83b0758698df454e328759dbd3d44555311"
   integrity sha512-NfQ4gyz38SL8sDNrSixxU2Os1a5xcdFxipAFxYEuLUlvU2uDwS4NUpsImcf1//SlWItCVMMLiylsxbmNMToV/g==
+
+"@types/web-bluetooth@^0.0.17":
+  version "0.0.17"
+  resolved "https://registry.yarnpkg.com/@types/web-bluetooth/-/web-bluetooth-0.0.17.tgz#5c9f3c617f64a9735d7b72a7cc671e166d900c40"
+  integrity sha512-4p9vcSmxAayx72yn70joFoL44c9MO/0+iVEBIQXe3v2h2SiAsEIo/G5v6ObFWvNKRFjbrVadNf9LqEEZeQPzdA==
 
 "@types/yauzl@^2.9.1":
   version "2.10.0"
@@ -703,6 +731,28 @@
   dependencies:
     "@volar/typescript" "1.7.8"
     "@vue/language-core" "1.8.1"
+
+"@vueuse/core@^10.2.0":
+  version "10.2.0"
+  resolved "https://registry.yarnpkg.com/@vueuse/core/-/core-10.2.0.tgz#65cf5222bf0178ff5ddec20a113d7ca6c30481e1"
+  integrity sha512-aHBnoCteIS3hFu7ZZkVB93SanVDY6t4TIb7XDLxJT/HQdAZz+2RdIEJ8rj5LUoEJr7Damb5+sJmtpCwGez5ozQ==
+  dependencies:
+    "@types/web-bluetooth" "^0.0.17"
+    "@vueuse/metadata" "10.2.0"
+    "@vueuse/shared" "10.2.0"
+    vue-demi ">=0.14.5"
+
+"@vueuse/metadata@10.2.0":
+  version "10.2.0"
+  resolved "https://registry.yarnpkg.com/@vueuse/metadata/-/metadata-10.2.0.tgz#a026425972786b83f5db6588d8252df42e07c247"
+  integrity sha512-IR7Mkq6QSgZ38q/2ZzOt+Zz1OpcEsnwE64WBumDQ+RGKrosFCtUA2zgRrOqDEzPBXrVB+4HhFkwDjQMu0fDBKw==
+
+"@vueuse/shared@10.2.0":
+  version "10.2.0"
+  resolved "https://registry.yarnpkg.com/@vueuse/shared/-/shared-10.2.0.tgz#9309b8e1ed660e24643482065ef0e59d223c3f69"
+  integrity sha512-dIeA8+g9Av3H5iF4NXR/sft4V6vys76CpZ6hxwj8eMXybXk2WRl3scSsOVi+kQ9SX38COR7AH7WwY83UcuxbSg==
+  dependencies:
+    vue-demi ">=0.14.5"
 
 abab@^2.0.6:
   version "2.0.6"
@@ -3857,7 +3907,7 @@ vue-tsc@^1.6.5:
     "@vue/typescript" "1.8.1"
     semver "^7.3.8"
 
-vue@^3.3.4:
+vue@^3.2.41, vue@^3.3.4:
   version "3.3.4"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.3.4.tgz#8ed945d3873667df1d0fcf3b2463ada028f88bd6"
   integrity sha512-VTyEYn3yvIeY1Py0WaYGZsXnz3y5UnGi62GjVEqvEGPl6nxbOrCXbVOTQWBEJUqAyTUk2uJ5JLVnYJ6ZzGbrSw==

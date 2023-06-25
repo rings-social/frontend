@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import ActionButton from '@/components/ActionButton.vue';
+
 </script>
 
 <template>
@@ -15,11 +17,11 @@
     </p>
     <div class="cta-buttons">
       <RouterLink to="/r/popular">
-        <button class="primary-button">Explore</button>
+        <ActionButton>Explore</ActionButton>
       </RouterLink>
 
       <a href="https://github.com/rings-social/">
-      <button class="secondary-button">Contribute</button>
+        <ActionButton :secondary="true">Contribute</ActionButton>
      </a>
     </div>
 

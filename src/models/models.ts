@@ -22,6 +22,10 @@ export type Badge = {
     textColor: string;
 }
 
+export type ErrorMessage = {
+    error: string;
+};
+
 export type User = {
     username: string;
     displayName: string;

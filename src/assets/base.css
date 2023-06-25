@@ -24,11 +24,12 @@
 
 /* semantic color variables for this project */
 :root {
-  --generic-border-radius: 8px;
   --generic-padding: 16px 16px;
   --comment-padding: 25px;
   --generic-column-gap: 18px;
   --generic-border: 1px solid #e6e6e6;
+  --generic-border-radius: 8px;
+  --generic-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   --color-background: #F5F6F7;
   --color-background-soft: var(--vt-c-white-soft);
@@ -41,6 +42,16 @@
   --color-heading-2: var(--vt-c-text-light-2);
 
   --color-text: var(--vt-c-text-light-1);
+
+  /* Active Buttons */
+  --color-primary: #635dff;
+  --color-primary-hover: #4743aa;
+  --color-button-text: #FFF;
+
+  /* Errors */
+  --color-error: #d81b1b;
+  --color-error-soft: #ac575e;
+  --color-success: #0e9e62;
 
   --section-gap: 160px;
 
@@ -150,4 +161,5 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
 }

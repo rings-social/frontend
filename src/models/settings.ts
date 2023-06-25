@@ -4,4 +4,8 @@ export type Settings = {
     
     // The base URL of the site
     baseUrl: string,
+
+    // Auth0 Settings
+    auth0Domain: string,
+    auth0ClientId: string,
 };
