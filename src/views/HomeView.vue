@@ -18,7 +18,7 @@
         <button class="primary-button">Explore</button>
       </RouterLink>
 
-      <a href="https://github.com/denysvitali/rings-social-frontend">
+      <a href="https://github.com/rings-social/">
       <button class="secondary-button">Contribute</button>
      </a>
     </div>
