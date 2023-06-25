@@ -1,4 +1,6 @@
 {
     "homeRing": "popular",
-    "baseUrl": "http://127.0.0.1:8081/api/v1"
+    "baseUrl": "http://127.0.0.1:8081/api/v1",
+    "auth0Domain": "rings.eu.auth0.com",
+    "auth0ClientId": "xTK0dWY5c34jnyfRtOd8LY7fQdmdzf1T"
 }
