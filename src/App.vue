@@ -35,7 +35,7 @@ const updateProfile = async() =>{
 
   if(response.status == 200){
     const user: User = await response.json();
-    userStore.user = user;
+    userStore.user.value = user;
   } else if(response.status == 404){
     // User doesn't exist, create it
     // Redirect to user creation page
@@ -43,7 +43,7 @@ const updateProfile = async() =>{
   }
 };
 
-if(hasAccessToken && userStore.user.username == null) {
+if(hasAccessToken && !userStore.user.available) {
   updateProfile();
 }
 
@@ -63,7 +63,7 @@ const login = () => {
       <SearchBar class="search-bar"/>
 
       <!-- User Profile Info -->
-      <div class="profile" v-if="userStore.user.available">
+      <div class="profile" v-if="userStore.user.value != null">
         <span class="username">{{ userStore.user.value.username }}</span>
         <ProfilePicture 
           :username="userStore.user.value.username"
