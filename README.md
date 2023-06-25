@@ -1,3 +1,4 @@
-# rings-social-frontend
+# frontend
 
-A frontend for [`rings-social-backend`](https://github.com/denysvitali/rings-social-backend/) - a content-rating / discussion website.
+The code for the frontend of [rings.social](https://rings.social),
+a content-rating platform build around communities (rings).
