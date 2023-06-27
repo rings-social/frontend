@@ -30,7 +30,8 @@ const props = defineProps({
 
 <style scoped lang="scss">
 .button {
-    display: inline-block;
+    display: flex;
+    align-items: center;
     padding: 8px 16px;
     border-radius: 8px;
     background-color: var(--color-primary);

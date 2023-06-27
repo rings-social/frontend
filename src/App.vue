@@ -8,7 +8,10 @@ import { useAuth0 } from '@auth0/auth0-vue';
 import { watch } from 'vue';
 import type { User } from './models/models';
 import router from './router';
-const { loginWithRedirect, getAccessTokenSilently, user } = useAuth0();
+const { loginWithRedirect, 
+  getAccessTokenSilently, 
+  user
+ } = useAuth0();
 const userStore = useUserStore();
 
 const hasAccessToken = userStore.idToken != null;

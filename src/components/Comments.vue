@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import type { Comment } from '@/models/models';
-import { computed, type PropType } from 'vue';
+import { computed, ref, type PropType, type Ref } from 'vue';
 import { DateTime } from 'luxon';
 import VoteContainer from './VoteContainer.vue';
 import UserLink from './UserLink.vue';
 import { marked } from 'marked';
 import createDOMPrufiy from 'dompurify';
+import CommentComposer from './CommentComposer.vue';
+import { useUserStore } from '@/stores/user';
 
+const showComposer: Ref<Boolean> = ref(false);
 const props = defineProps({
     comments: {
         type: Array as PropType<Array<Comment>>,
@@ -18,6 +21,29 @@ const props = defineProps({
     }
 });
 
+const { user, idToken } = useUserStore();
+
+const toggleComposer = ()=>{
+    showComposer.value = !showComposer.value
+}
+
+const deleteComment = async (comment: Comment) => {
+    // Delete comment
+    console.log(`Deleting ${comment.id} (by ${comment.author_id})`);
+    // Call DELETE /posts/:postId/comments/:commentId
+    const response = await fetch(`${window._settings.baseUrl}/posts/${comment.post_id}/comments/${comment.id}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${idToken}`
+        },
+    });
+
+    if(response.status == 200) {
+        // Remove comment from tree
+        
+    }
+}
+
 const dompurify = createDOMPrufiy(window);
 
 const c = computed(() => {
@@ -28,6 +54,9 @@ const c = computed(() => {
                 {ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'code', 'pre', 'br', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']}
             );
             return sanitized;
+        },
+        username: () => {
+            return user.value?.username;
         }
     }
 });
@@ -35,7 +64,7 @@ const c = computed(() => {
 
 <template>
     <div class="comments">
-        <div v-for="comment in comments" :key="comment.id" class="comment" :class="{
+        <div v-for="comment in props.comments" :key="comment.id" class="comment" :class="{
           'comment-depth-0': comment.depth == 0,
         }">
             <div class="comment-content">
@@ -54,10 +83,26 @@ const c = computed(() => {
                     </div>
                     <div class="comment-body" v-html="c.renderedBody(comment.body)"></div>
                     <div class="comment-actions">
-                        <div class="action reply">
+                        <div class="action action-reply" @click="toggleComposer">
                             <font-awesome-icon class="icon" :icon="['fas', 'message']" />
                             <span class="text">Reply</span>
                         </div>
+                        <div 
+                            class="action action-delete" 
+                            @click="deleteComment(comment)"
+                            v-if="comment.author_id == c.username()"
+                        >
+                            <font-awesome-icon class="icon" :icon="['fas', 'trash']" />
+                            <span class="text">Delete</span>
+                        </div>
+                    </div>
+
+                    <div class="composer-container">
+                        <CommentComposer 
+                            v-if="showComposer"
+                            :postId="comment.post_id"
+                            :parentId="comment.id"
+                        />
                     </div>
 
                     <div class="comment-children" v-if="comment.replies != null">
@@ -96,12 +141,12 @@ const c = computed(() => {
         .comment-content {
             display: flex;
             flex-direction: row;
+            align-self: stretch;
             column-gap: var(--generic-column-gap);
 
             .comment-left {
                 display: flex;
                 flex-direction: column;
-                flex-grow: 1;
                 width: 1rem;
 
                 .upvote-downvote-area {
@@ -124,6 +169,7 @@ const c = computed(() => {
             .comment-right {
                 display: flex;
                 flex-direction: column;
+                flex-grow: 1;
 
                 .comment-body {
                     margin-bottom: 0.5rem;
@@ -152,6 +198,7 @@ const c = computed(() => {
                         }
                     }
                 }
+
                 .comment-metadata {
                     display: flex;
                     color: var(--color-dimmed);
@@ -163,7 +210,7 @@ const c = computed(() => {
                 .comment-actions {
                     display: flex;
                     flex-direction: row;
-                    column-gap: 8px;
+                    column-gap: 24px;
                     margin-top: 8px;
 
                     .action {
@@ -172,11 +219,19 @@ const c = computed(() => {
                         align-items: center;
                         column-gap: 4px;
                         cursor: pointer;
-                        transition: color 0.1s ease-in-out;
+                        transition: color 0.15s ease-in-out;
                         font-size: 0.8rem;
                         color: var(--color-comment-actions);
                     }
+
+                    .action.action-delete:hover {
+                        color: var(--color-danger);
+                    }
                     
+                }
+
+                .comment-composer {
+                    margin-top: 16px;
                 }
             }
         }

@@ -53,6 +53,10 @@
   --color-error-soft: #ac575e;
   --color-success: #0e9e62;
 
+
+  /* Danger */
+  --color-danger: #d81b1b;
+
   --section-gap: 160px;
 
   --color-link: #206faf;

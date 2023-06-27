@@ -5,6 +5,7 @@ import { DateTime } from 'luxon';
 import { ref, computed } from 'vue';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter, type RouteLocationNormalized } from 'vue-router';
 import SimplePostVue from '@/components/SimplePost.vue';
+import CommentComposer from '@/components/CommentComposer.vue';
 
 
 const post = ref<Post | null>(null);
@@ -70,7 +71,7 @@ let c = computed(() => {
   
 
 <template>
-    <div class="post">
+    <div class="post" v-if="c.simplePost != null">
         <SimplePostVue 
             :post="c.simplePost" 
             :singlePostView="true"
@@ -84,14 +85,7 @@ let c = computed(() => {
 
         <!-- Comment composer -->
 
-        <div class="post-comment-composer">
-            <textarea 
-                class="post-comment-textarea" 
-                placeholder="What's on your mind?"
-                rows="4"
-            ></textarea>
-            <button class="post-comment-button">Comment</button>
-        </div> 
+        <CommentComposer :postId="c.simplePost.id"/>
     </div>
 </template>
   
