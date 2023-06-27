@@ -12,13 +12,19 @@ const props = defineProps({
     parentId: {
         type: Number,
         required: false,
+    },
+    depth: {
+        type: Number,
+        default: 0,
     }
 });
+
+const emit = defineEmits(['comment']);
 
 const userStore = useUserStore();
 
 const commentContent = ref('');
-const submit = async function(){
+const submit = async function () {
     // Submitting to POST /api/v1/comments
     const response = await fetch(`${window._settings.baseUrl}/posts/${props.postId}/comments`, {
         method: 'POST',
@@ -33,28 +39,22 @@ const submit = async function(){
     });
 
     if(response.status == 200) {
-        // TODO: Add comment to tree
         let comment = await response.json() as Comment;
+        emit('comment', comment);
     }
+
 }
 
 </script>
 
 <template>
-<div class="comment-composer">
-    <textarea 
-        class="post-comment-textarea" 
-        placeholder="What's on your mind?"
-        rows="4"
-        v-model="commentContent"
-    ></textarea>
-    <ActionButton
-        class="comment-button"
-        @click="submit"
-    >
-    Comment
-    </ActionButton>
-</div> 
+    <div class="comment-composer">
+        <textarea class="post-comment-textarea" placeholder="What's on your mind?" rows="4"
+            v-model="commentContent"></textarea>
+        <ActionButton class="comment-button" @click="submit">
+            Comment
+        </ActionButton>
+    </div>
 </template>
 
 <style lang="scss" scoped>

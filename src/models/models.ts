@@ -75,6 +75,8 @@ export type Comment = {
     downs: number;
     score: number;
     replies: Comment[] | null;
+
+    _showComposer: boolean;
 }
 
 

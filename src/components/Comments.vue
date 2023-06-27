@@ -23,8 +23,8 @@ const props = defineProps({
 
 const { user, idToken } = useUserStore();
 
-const toggleComposer = ()=>{
-    showComposer.value = !showComposer.value
+const toggleComposer = (comment: Comment)=>{
+    comment._showComposer = !comment._showComposer;
 }
 
 const deleteComment = async (comment: Comment) => {
@@ -60,13 +60,24 @@ const c = computed(() => {
         }
     }
 });
+
+const addComment = (comment: Comment, newComment: Comment) => {
+    if(comment.replies == null) comment.replies = [];
+    comment.replies.push(newComment);
+    toggleComposer(comment);
+}
 </script>
 
 <template>
     <div class="comments">
-        <div v-for="comment in props.comments" :key="comment.id" class="comment" :class="{
-          'comment-depth-0': comment.depth == 0,
-        }">
+        <div 
+            v-for="comment in props.comments" 
+            :key="comment.post_id + '_' + comment.id" 
+            class="comment" 
+            :class="{
+            'comment-depth-0': comment.depth == 0,
+            }"
+        >
             <div class="comment-content">
                 <div class="comment-left">
                     <VoteContainer :score="comment.score" spacing="small" />
@@ -83,7 +94,7 @@ const c = computed(() => {
                     </div>
                     <div class="comment-body" v-html="c.renderedBody(comment.body)"></div>
                     <div class="comment-actions">
-                        <div class="action action-reply" @click="toggleComposer">
+                        <div class="action action-reply" @click="toggleComposer(comment)">
                             <font-awesome-icon class="icon" :icon="['fas', 'message']" />
                             <span class="text">Reply</span>
                         </div>
@@ -99,15 +110,20 @@ const c = computed(() => {
 
                     <div class="composer-container">
                         <CommentComposer 
-                            v-if="showComposer"
+                            v-if="comment._showComposer"
                             :postId="comment.post_id"
                             :parentId="comment.id"
+                            :depth="comment.depth"
+                            @comment="addComment(comment, $event)"
                         />
                     </div>
 
                     <div class="comment-children" v-if="comment.replies != null">
                         <div class="comment-children-divider" v-for="(n, i) in depth"></div>
-                        <Comments :comments="comment.replies" :depth="comment.depth" />
+                        <Comments 
+                            :comments="comment.replies" 
+                            :depth="comment.depth" 
+                        />
                     </div>
                 </div>
             </div>
