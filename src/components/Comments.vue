@@ -39,11 +39,11 @@ const deleteComment = async (comment: Comment) => {
     });
 
     if(response.status == 200) {
-        // Remove comment from tree
-        
+        comment.body = '[deleted]';
     }
 }
 
+const emit = defineEmits(['newComment'])
 const dompurify = createDOMPrufiy(window);
 
 const c = computed(() => {
@@ -65,6 +65,45 @@ const addComment = (comment: Comment, newComment: Comment) => {
     if(comment.replies == null) comment.replies = [];
     comment.replies.push(newComment);
     toggleComposer(comment);
+    emit('newComment', null);
+}
+
+const voteUp = async (comment: Comment) => {
+    const response = await fetch(`${window._settings.baseUrl}/posts/${comment.post_id}/comments/${comment.id}/upvote`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${idToken}`
+        },
+    });
+    if(response.status == 200){
+        if(comment.votedDown) {
+            comment.score += 2;
+        }
+        else {
+            comment.score++;
+        }
+        comment.votedUp = true;
+        comment.votedDown = false;
+    }
+}
+
+const voteDown = async (comment: Comment) => {
+    const response = await fetch(`${window._settings.baseUrl}/posts/${comment.post_id}/comments/${comment.id}/downvote`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${idToken}`
+        },
+    });
+    if(response.status == 200){
+        if(comment.votedUp) {
+            comment.score -= 2;
+        }
+        else {
+            comment.score--;
+        }
+        comment.votedUp = false;
+        comment.votedDown = true;
+    }
 }
 </script>
 
@@ -80,7 +119,14 @@ const addComment = (comment: Comment, newComment: Comment) => {
         >
             <div class="comment-content">
                 <div class="comment-left">
-                    <VoteContainer :score="comment.score" spacing="small" />
+                    <VoteContainer 
+                        :score="comment.score" 
+                        spacing="small"
+                        :votedUp="comment.votedUp"
+                        :votedDown="comment.votedDown"
+                        @voteUp="voteUp(comment)"
+                        @voteDown="voteDown(comment)"
+                    />
                     <div class="vertical-line"></div>
                 </div>
                 <div class="comment-right">

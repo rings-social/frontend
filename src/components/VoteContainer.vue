@@ -8,8 +8,20 @@ const props = defineProps({
     spacing: {
         type: String,
         default: 'large'
+    },
+
+    votedUp: {
+        type: Boolean,
+        default: false,
+    },
+
+    votedDown: {
+        type: Boolean,
+        default: false,
     }
 });
+
+const emit = defineEmits(['voteUp', 'voteDown']);
 </script>
 
 <template>
@@ -17,11 +29,15 @@ const props = defineProps({
         'vote-container-small': spacing === 'small',
         'vote-container-large': spacing === 'large'
     }">
-        <div class="vote vote-up">
+        <div class="vote vote-up" @click="emit('voteUp')" :class="{
+            'active': votedUp,
+        }">
             <font-awesome-icon class="icon" :icon="['fas', 'chevron-up']" />
         </div>
         <div class="vote vote-count">{{ score }}</div>
-        <div class="vote vote-down">
+        <div class="vote vote-down" @click="emit('voteDown')" :class="{
+            'active': votedDown,
+        }">
             <font-awesome-icon class="icon" :icon="['fas', 'chevron-down']" />
         </div>
     </div>

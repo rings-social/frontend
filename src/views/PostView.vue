@@ -6,6 +6,8 @@ import { ref, computed } from 'vue';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter, type RouteLocationNormalized } from 'vue-router';
 import SimplePostVue from '@/components/SimplePost.vue';
 import CommentComposer from '@/components/CommentComposer.vue';
+import { useUserStore } from '@/stores/user';
+import { getHeaders } from '@/utils/headers';
 
 
 const post = ref<Post | null>(null);
@@ -22,6 +24,8 @@ onBeforeRouteLeave(async (to, from, next) => {
     next();
 });
 
+const { idToken } = useUserStore();
+
 async function loadPost(to: RouteLocationNormalized){
     let postId = to.params.postId as string;
     try {
@@ -29,10 +33,15 @@ async function loadPost(to: RouteLocationNormalized){
         const postData: Post = await postResponse.json();
         post.value = postData;
 
-        const commentsResponse = await fetch(`${window._settings.baseUrl}/posts/${postId}/comments`);
+        const commentsResponse = await fetch(
+            `${window._settings.baseUrl}/posts/${postId}/comments`,
+            {
+                headers: getHeaders(),
+            });
         const commentsData = await commentsResponse.json();
-        comments.value = commentsData;
-
+        if(commentsData != null){
+            comments.value = commentsData;
+        }
         numberOfComments.value = postData.commentsCount;
 
         
@@ -67,6 +76,16 @@ let c = computed(() => {
         } as SimplePost: null,
     }
 });
+
+const addComment = (comment: Comment) => {
+    console.log('Adding comment')
+    comments.value.push(comment);
+    numberOfComments.value++;
+}
+
+const newComment = () => {
+    numberOfComments.value++;
+}
 </script>
   
 
@@ -80,12 +99,12 @@ let c = computed(() => {
         <!-- The post's comments -->
         <h3>Comments ({{ numberOfComments }})</h3>
         <div class="post-comments" v-if="comments.length > 0">
-            <Comments :comments="comments" />
+            <Comments :comments="comments" @newComment="newComment"/>
         </div>
 
         <!-- Comment composer -->
 
-        <CommentComposer :postId="c.simplePost.id"/>
+        <CommentComposer :postId="c.simplePost.id" @comment="addComment($event)"/>
     </div>
 </template>
   

@@ -40,17 +40,21 @@ const submit = async function () {
 
     if(response.status == 200) {
         let comment = await response.json() as Comment;
+        commentContent.value = '';
         emit('comment', comment);
     }
-
 }
 
 </script>
 
 <template>
     <div class="comment-composer">
-        <textarea class="post-comment-textarea" placeholder="What's on your mind?" rows="4"
-            v-model="commentContent"></textarea>
+        <textarea 
+            class="post-comment-textarea" 
+            placeholder="What's on your mind?" 
+            rows="4"
+            v-model="commentContent"
+        ></textarea>
         <ActionButton class="comment-button" @click="submit">
             Comment
         </ActionButton>
@@ -72,7 +76,5 @@ const submit = async function () {
     .comment-button {
         align-self: flex-end;
     }
-
-
 }
 </style>

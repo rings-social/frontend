@@ -76,6 +76,8 @@ export type Comment = {
     score: number;
     replies: Comment[] | null;
 
+    votedUp: boolean;
+    votedDown: boolean;
     _showComposer: boolean;
 }
 
