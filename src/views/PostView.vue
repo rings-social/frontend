@@ -6,13 +6,17 @@ import { ref, computed } from 'vue';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter, type RouteLocationNormalized } from 'vue-router';
 import SimplePostVue from '@/components/SimplePost.vue';
 import CommentComposer from '@/components/CommentComposer.vue';
+import ErrorBox from '@/components/ErrorBox.vue';
 import { useUserStore } from '@/stores/user';
 import { getHeaders } from '@/utils/headers';
+import type internal from 'stream';
 
 
 const post = ref<Post | null>(null);
 const comments = ref<Comment[]>([]);
 const numberOfComments = ref<number>(0);
+const loadingError = ref<string|null>(null);
+const commentsLoadingError = ref<string|null>(null);
 
 onBeforeRouteUpdate(async (to, from, next) => {
     loadPost(to);
@@ -26,27 +30,43 @@ onBeforeRouteLeave(async (to, from, next) => {
 
 const { idToken } = useUserStore();
 
+async function loadComments(postId: string, postData: Post){
+    const commentsResponse = await fetch(
+        `${window._settings.baseUrl}/posts/${postId}/comments`,
+        {
+            headers: getHeaders(),
+        }
+    );
+    if(commentsResponse.status != 200){
+        let json = await commentsResponse.json();
+        commentsLoadingError.value = `Unable to fetch comments: ${commentsResponse.status} ${commentsResponse.statusText} - ${json.error}`
+        return;
+    }
+    
+    const commentsData = await commentsResponse.json();
+    if(commentsData != null){
+        comments.value = commentsData;
+    }
+    numberOfComments.value = postData.commentsCount;
+}
+
 async function loadPost(to: RouteLocationNormalized){
     let postId = to.params.postId as string;
     try {
         const postResponse = await fetch(`${window._settings.baseUrl}/posts/${postId}`);
-        const postData: Post = await postResponse.json();
-        post.value = postData;
 
-        const commentsResponse = await fetch(
-            `${window._settings.baseUrl}/posts/${postId}/comments`,
-            {
-                headers: getHeaders(),
-            });
-        const commentsData = await commentsResponse.json();
-        if(commentsData != null){
-            comments.value = commentsData;
+        if(postResponse.status == 200){
+            const postData: Post = await postResponse.json();
+            post.value = postData;
+
+            await loadComments(postId, postData);
+        } else {
+            // Show error in UI
+            loadingError.value = `Unable to fetch post: ${postResponse.status}`
         }
-        numberOfComments.value = postData.commentsCount;
-
-        
     } catch (e) {
         console.error(e);
+        loadingError.value = `Unable to fetch post: ${e}`
     }
 }
 
@@ -101,10 +121,19 @@ const newComment = () => {
         <div class="post-comments" v-if="comments.length > 0">
             <Comments :comments="comments" @newComment="newComment"/>
         </div>
+        <div v-else-if="commentsLoadingError != null">
+            <ErrorBox :loadingError="commentsLoadingError"/>
+        </div>
 
         <!-- Comment composer -->
 
         <CommentComposer :postId="c.simplePost.id" @comment="addComment($event)"/>
+    </div>
+    <div class="post-error" v-else-if="loadingError != null">
+        <ErrorBox :loadingError="loadingError"/>
+    </div>
+    <div class="post" v-else>
+        <p>Loading...</p>
     </div>
 </template>
   

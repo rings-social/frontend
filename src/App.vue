@@ -9,13 +9,11 @@ import { watch } from 'vue';
 import type { User } from './models/models';
 import router from './router';
 const { loginWithRedirect, 
-  getAccessTokenSilently, 
-  user
- } = useAuth0();
+  getAccessTokenSilently,
+  user,
+} = useAuth0();
 const userStore = useUserStore();
-
-const hasAccessToken = userStore.idToken != null;
-
+const { idToken } = userStore;
 
 watch(user, async (newUser) => {
   if (newUser !== undefined) {
@@ -46,7 +44,24 @@ const updateProfile = async() =>{
   }
 };
 
-if(hasAccessToken && !userStore.user.available) {
+if(idToken != null){
+  // Check idToken validity
+  let token = idToken.replace('-', '+').replace('_', '/');
+  let payload = JSON.parse(atob(token.split('.')[1]));
+
+
+  let now = new Date();
+  if(now.getTime() > payload.exp * 1000){
+    console.log('Token is expired');
+    // Token is expired
+    userStore.idToken = null;
+    userStore.user.available = false;
+    userStore.user.value = undefined;
+  }
+
+}
+
+if(userStore.idToken != null && !userStore.user.available) {
   updateProfile();
 }
 
@@ -73,7 +88,7 @@ const login = () => {
           class="profile-picture"
         />
       </div>
-      <div class="user-creation" v-else-if="hasAccessToken">
+      <div class="user-creation" v-else-if="idToken != null">
         <!-- Creating the profile -->
         <ActionButton @click="$router.push('/createuser')">Create Profile</ActionButton>
       </div>

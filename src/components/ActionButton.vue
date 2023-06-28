@@ -24,7 +24,7 @@ const props = defineProps({
             'disabled': props.disabled,
         }"
     >
-        <slot></slot>
+        <slot class="content"></slot>
     </div>
 </template>
 

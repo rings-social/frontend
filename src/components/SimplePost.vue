@@ -57,7 +57,7 @@ let c = computed(() => {
             <div v-else class="post-title-container">
                 <RouterLink 
                     :to="`/r/${post.ringName}/${post.id}`" 
-                    class="post-title"
+                    class="post-text"
                 >
                 <span class="post-title">{{ post.title }}</span>
                 </RouterLink>

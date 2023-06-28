@@ -2,12 +2,14 @@
 import { ref, type Ref } from 'vue';
 import type { SimplePost } from '@/models/models';
 import SimplePostVue from '@/components/SimplePost.vue';
+import ErrorBox from '@/components/ErrorBox.vue';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter, type RouteLocationNormalized } from 'vue-router';
 
 let loaded: Ref<boolean> = ref(false);
 let posts: Ref<Array<SimplePost>> = ref([]);
 let ringName: Ref<string> = ref('');
 let multiRing: Ref<boolean> = ref(false);
+const loadingError: Ref<string|null> = ref(null);
 
 // We fetch posts from the API even when the user changes route (ring)
 onBeforeRouteUpdate((to, from, next) => {
@@ -36,7 +38,8 @@ function loadPosts(to: RouteLocationNormalized){
     fetch(window._settings.baseUrl + '/r/' + ringName.value + '/posts')
         .then((response: { json: () => any; }) => response.json())
         .then((data: SimplePost[]) => posts.value = data)
-        .then(() => loaded.value = true);
+        .then(() => loaded.value = true)
+        .catch((error: any) => loadingError.value = `Unable to fetch posts: ${error}`);
 }
 
 loadPosts(useRouter().currentRoute.value);
@@ -52,12 +55,15 @@ loadPosts(useRouter().currentRoute.value);
                 <SimplePostVue v-for="post in posts" :key="post.id" :post="post" :multiring="multiRing" />
             </div>
         </div>
-        <div v-else>
-        <div class="loading">
-            <div class="loading-text">Loading ...</div>
-            <font-awesome-icon class="icon fa-spin" :icon="['fas', 'circle-notch']" />
+        <div v-else-if="loadingError != null">
+            <ErrorBox :loading-error="loadingError" />
         </div>
-    </div>  
+        <div v-else>
+            <div class="loading">
+                <div class="loading-text">Loading ...</div>
+                <font-awesome-icon class="icon fa-spin" :icon="['fas', 'circle-notch']" />
+            </div>
+        </div>  
     </div>
 </template>
 

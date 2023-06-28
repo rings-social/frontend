@@ -73,6 +73,10 @@ main {
     gap: 10px;
     margin-top: 2em;
     margin-bottom: 2em;
+
+    a {
+      text-decoration: none;
+    }
   }
 
   .primary-button,

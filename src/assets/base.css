@@ -56,6 +56,8 @@
 
   /* Danger */
   --color-danger: #d81b1b;
+  --color-error: #d81b1b;
+  --color-error-text: #FFF;
 
   --section-gap: 160px;
 
