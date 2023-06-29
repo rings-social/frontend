@@ -26,8 +26,8 @@ import ActionButton from '@/components/ActionButton.vue';
     </div>
 
     <div class="details">
-      We're still building the product and the content is read only for now,
-      but you can still explore the website and contribute to the project!
+      We're still building the product and we're still missing a lot of features:
+      in the meantime you can sign-up, explore the website and contribute to the project by giving your feedback and sharing your ideas.
     </div>
   </main>
 </template>
@@ -107,6 +107,12 @@ main {
   .secondary-button:hover {
     background-color: #3c57cb;
     color: #fff;
+  }
+
+  .details {
+    font-weight: 300;
+    text-align: center;
+    max-width: 800px;
   }
 }
 </style>
