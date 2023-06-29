@@ -59,7 +59,6 @@ let c = computed(() => {
                     <RingLink 
                         :name="post.ringName"
                         :color="post.ringColor"
-                        :text-color="c.ringTextColor"    
                     ></RingLink>
                     <span class="post-divider">•</span>
                 </div>
