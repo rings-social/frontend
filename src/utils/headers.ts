@@ -2,7 +2,7 @@ import { useUserStore } from "@/stores/user";
 
 const { idToken } = useUserStore();
 
-export const getHeaders = () => {
+export const getHeaders = (): Record<string, string> => {
   let headers = {
     'Authorization': '',
   };

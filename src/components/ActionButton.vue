@@ -40,7 +40,7 @@ const props = defineProps({
     cursor: pointer;
     user-select: none;
     transition: background-color 0.2s ease-in-out;
-
+    justify-content: center;
 
     &.is-secondary {
         color: var(--color-primary);
