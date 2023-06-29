@@ -3,6 +3,7 @@ import { ref, type PropType, type Ref, computed } from 'vue';
 import type { SimplePost } from '@/models/models';
 import { DateTime } from 'luxon';
 import type { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import RingLink from './RingLink.vue';
 import VoteContainer from './VoteContainer.vue';
 import UserLink from './UserLink.vue';
 import ProfilePicture from './ProfilePicture.vue';
