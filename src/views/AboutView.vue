@@ -17,7 +17,7 @@ import ProfilePicture from '@/components/ProfilePicture.vue';
         <p>
             Rings is a project born from the passion for content-voting platforms such as HackerNews and Reddit. The whole idea started as an alternative platform for <a href="https://www.theverge.com/2023/6/8/23754780/reddit-api-updates-changes-news-announcements">the recent API changes that have basically killed third party apps</a>. <br/>
 Our goal is to provide a backend that is compatible with the Reddit API, so that migrating the existing apps to Rings is as easy as changing the API endpoint. <br/>
-On top of that, the long term goal is to provide a platform where the users are in control of the content and the website, and get some retribution for that. We want to put safeguards in place to avoid another situation like Twitter &amp; Reddit. </br>
+On top of that, the long term goal is to provide a platform where the users are in control of the content and the website, and get some retribution for that. We want to put safeguards in place to avoid another situation like Twitter &amp; Reddit. <br/>
 Our frontend code is open source (AGPLv3), and the backend code will soon be available as well licensed in the same way.
         </p>
         <h2>Features</h2>
