@@ -7,7 +7,6 @@ import RingLink from './RingLink.vue';
 import VoteContainer from './VoteContainer.vue';
 import UserLink from './UserLink.vue';
 import ProfilePicture from './ProfilePicture.vue';
-import RingLink from './RingLink.vue';
 
 let props = defineProps({
     post: {
