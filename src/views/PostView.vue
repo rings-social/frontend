@@ -9,7 +9,6 @@ import CommentComposer from '@/components/CommentComposer.vue';
 import ErrorBox from '@/components/ErrorBox.vue';
 import { useUserStore } from '@/stores/user';
 import { getHeaders } from '@/utils/headers';
-import type internal from 'stream';
 
 
 const post = ref<Post | null>(null);

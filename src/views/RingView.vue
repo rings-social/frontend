@@ -4,6 +4,7 @@ import type { SimplePost } from '@/models/models';
 import SimplePostVue from '@/components/SimplePost.vue';
 import ErrorBox from '@/components/ErrorBox.vue';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter, type RouteLocationNormalized } from 'vue-router';
+import ActionButtonVue from '@/components/ActionButton.vue';
 
 let loaded: Ref<boolean> = ref(false);
 let posts: Ref<Array<SimplePost>> = ref([]);
@@ -48,9 +49,21 @@ loadPosts(useRouter().currentRoute.value);
 <template>
     <div class="ring">
         <div class="ring-content" v-if="loaded">
-            <h2>
-                {{ ringName }}
-            </h2>
+            <div class="ring-topbar">
+                <h2>
+                    {{ ringName }}
+                </h2>
+                <div class="ring-actions">
+                    <router-link 
+                        v-if="!multiRing" :to="'/r/' + ringName + '/createPost'"
+                        class="action-button"
+                    >
+                        <ActionButtonVue :primary="true">
+                            Create post
+                        </ActionButtonVue>
+                    </router-link>
+                </div>
+            </div>
             <div class="posts">
                 <SimplePostVue v-for="post in posts" :key="post.id" :post="post" :multiring="multiRing" />
             </div>
@@ -69,6 +82,26 @@ loadPosts(useRouter().currentRoute.value);
 
 <style scoped lang="scss">
 .ring {
+
+    .ring-topbar {
+        display: flex;
+        flex-direction: row;
+
+
+        h2 {
+            flex-grow: 1;
+        }
+        
+        .ring-actions {
+            display: flex;
+            flex-direction: row;
+            column-gap: 10px;
+
+            .action-button {
+                text-decoration: none;
+            }
+        }
+    }
     
 
     /* Posts is a collection of reddit-like entries */

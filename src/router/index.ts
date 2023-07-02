@@ -30,6 +30,11 @@ const router = createRouter({
       component: () => import('../views/RingView.vue')
     },
     {
+      path: '/r/:ringName/createPost',
+      name: 'create-post',
+      component: () => import('../views/CreatePostView.vue')
+    },
+    {
       path: '/newRing',
       name: 'new-ring',
       component: () => import('../views/NewRingView.vue')
