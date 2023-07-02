@@ -6,6 +6,7 @@ import { ref, watch, type Ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const ringName = ref('');
+const ringTitle = ref('');
 const ringDescription = ref('');
 const ringColor = ref('#FF0000');
 const valid = ref(false);
@@ -24,6 +25,7 @@ const createRing = async () => {
             method: 'POST',
             headers: headers,
             body: JSON.stringify({
+                title: ringTitle.value,
                 description: ringDescription.value,
                 color: ringColor.value,
             }),
@@ -87,14 +89,21 @@ const setColor = (event: Event) => {
         <h1>New Ring</h1>
         <p>Fill the form below to create a new ring.</p>
         <form class="create-ring">
+            <label for="ring-title">Identifier</label>
             <input 
                 type="text" 
-                placeholder="Ring name" 
+                placeholder="sport_fitness"
                 v-model="ringName"
             />
             <p class="error" v-if="ringNameError">{{ ringNameError }}</p>
+            <label for="ring-title">Title</label>
             <input type="text" 
-                placeholder="Ring description"
+                placeholder="Sports & Fitness"
+                v-model="ringTitle"
+            />
+            <label for="ring-title">Description</label>
+            <input type="text" 
+                placeholder="A community to discuss about ..."
                 v-model="ringDescription"    
             />
             <label for="color">Color</label>
