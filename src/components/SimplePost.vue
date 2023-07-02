@@ -7,6 +7,7 @@ import RingLink from './RingLink.vue';
 import VoteContainer from './VoteContainer.vue';
 import UserLink from './UserLink.vue';
 import ProfilePicture from './ProfilePicture.vue';
+import RenderedMarkdown from './RenderedMarkdown.vue';
 
 let props = defineProps({
     post: {
@@ -83,7 +84,7 @@ let c = computed(() => {
             </div>
 
             <div class="post-body" v-if="post.body != null">
-                {{ post.body }}
+                <RenderedMarkdown :markdown="post.body" />
             </div>
 
             <div class="post-footer-divider" v-if="!singlePostView"></div>

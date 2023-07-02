@@ -8,6 +8,8 @@ import { marked } from 'marked';
 import createDOMPrufiy from 'dompurify';
 import CommentComposer from './CommentComposer.vue';
 import { useUserStore } from '@/stores/user';
+import RenderedMarkdown from './RenderedMarkdown.vue';
+import { useIntersectionObserver } from '@vueuse/core';
 
 const showComposer: Ref<Boolean> = ref(false);
 const props = defineProps({
@@ -43,19 +45,10 @@ const deleteComment = async (comment: Comment) => {
     }
 }
 
-const emit = defineEmits(['newComment'])
-const dompurify = createDOMPrufiy(window);
-
+const emit = defineEmits(['newComment']);
 const c = computed(() => {
     return {
-        renderedBody: (body: string) => {
-            const renderedMd = marked.parse(body);
-            const sanitized = dompurify.sanitize(renderedMd,
-                {ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'code', 'pre', 'br', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']}
-            );
-            return sanitized;
-        },
-        username: () => {
+        username: ()=>{
             return user.value?.username;
         }
     }
@@ -138,7 +131,9 @@ const voteDown = async (comment: Comment) => {
                         <div class="comment-divider">•</div>
                         <div class="comment-date">{{ DateTime.fromISO(comment.createdAt).toRelative() }}</div>
                     </div>
-                    <div class="comment-body" v-html="c.renderedBody(comment.body)"></div>
+                    <div class="comment-body">
+                        <RenderedMarkdown :markdown="comment.body" />
+                    </div>
                     <div class="comment-actions">
                         <div class="action action-reply" @click="toggleComposer(comment)">
                             <font-awesome-icon class="icon" :icon="['fas', 'message']" />
@@ -235,30 +230,6 @@ const voteDown = async (comment: Comment) => {
 
                 .comment-body {
                     margin-bottom: 0.5rem;
-                    a {
-                        color: var(--color-link);
-                        &:visited {
-                            color: var(--color-link-visited);
-                        }
-                    }
-                    pre {
-                        display: block;
-                        margin-top: 1em;
-                        margin-bottom: 1em;
-                        code {
-                            display: block;
-                            margin-top: 5px;
-                            background-color: var(--color-code-background);
-                            padding: var(--code-block-padding);
-                        }
-                    }
-
-                    p {
-                        code {
-                            background-color: var(--color-code-background);
-                            padding: var(--code-inline-padding);
-                        }
-                    }
                 }
 
                 .comment-metadata {
