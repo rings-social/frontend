@@ -180,7 +180,7 @@ loadRing();
     form.create-post {
         display: flex;
         flex-direction: column;
-        width: 500px;
+        width: min(80vw, 500px);
         align-items: stretch;
         justify-content: center;
         margin-left: auto;
