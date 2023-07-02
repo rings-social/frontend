@@ -65,6 +65,10 @@ watch([postTitle, postLink, postBody], () => {
     }
 
     // Link is less than 300 chars
+    if(postLink.value.length > 300){
+        valid.value = false;
+        return;
+    }
 
     valid.value = true;
 });
