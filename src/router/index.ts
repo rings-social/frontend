@@ -20,6 +20,11 @@ const router = createRouter({
       component: () => import('../views/LoginView.vue')
     },
     {
+      path: '/rings',
+      name: 'rings',
+      component: () => import('../views/RingsView.vue')
+    },
+    {
       path: '/createUser',
       name: 'create-user',
       component: () => import('../views/CreateUserView.vue'),

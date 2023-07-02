@@ -43,6 +43,12 @@ export type SocialLink = {
     url: string;
 };
 
+export type Paginated<T> = {
+    items: T[];
+    total: number;
+    after: string;
+};
+
 export type SimplePost = {
     id: number;
     createdAt: string;

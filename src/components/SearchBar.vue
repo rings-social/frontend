@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import router from '@/router';
-import { computed, ref } from 'vue';
+import { computed, watch, type Ref, ref } from 'vue';
+import { type Paginated, type Ring } from '@/models/models';
 
+const query = ref('');
+const showResults = ref(false);
+const results: Ref<Array<Ring>> = ref([]);
 
 type Result = {
     name: string,
@@ -9,15 +13,45 @@ type Result = {
     description: string
 };
 
-const knownRings = [
-    {name: 'popular', title: 'Popular', description: 'The most popular posts on Rings'},
-    {name: 'news', title: 'News', description: 'News from around the world'},
-]
+const showDefaultResults = async ()=>{
+    const response = await fetch(`${window._settings.baseUrl}/rings?limit=5`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
 
-let c = computed(() => {
-    return {
-    results: knownRings.filter(ring => ring.name.includes(query.value)),
-}});
+    if(response.status == 200){
+        const data: Paginated<Ring> = await response.json();
+        results.value = data.items;
+        showResults.value = true;
+    } else {
+        console.error(`Unable to fetch rings: ${response.status}`)
+    }
+}
+
+watch(query, () => {
+    if (query.value.length > 0) {
+        // Fetch results from /api/v1/rings?q=query
+        fetch(`${window._settings.baseUrl}/rings?q=${query.value}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then((response) => {
+            if (response.status == 200) {
+                return response.json();
+            } else {
+                console.error(`Unable to fetch rings: ${response.status}`)
+                return [];
+            }
+        })
+        .then((data: Paginated<Ring>) => {
+            results.value = data.items;
+        });
+    }
+});
 
 function visit(name: string) {
     router.push(`/r/${name}`);
@@ -30,9 +64,6 @@ function hideResults() {
         showResults.value = false;
     }, 250);
 }
-
-const query = ref<string>('');
-const showResults = ref<boolean>(false);
 </script>
 
 <template>
@@ -41,7 +72,7 @@ const showResults = ref<boolean>(false);
             type="text" 
             placeholder="Search" 
             v-model="query"
-            @focus="showResults = true"
+            @focus="showDefaultResults"
         >
         <!-- Search Icon -->
         <font-awesome-icon :icon="['fas', 'magnifying-glass']" class="icon" />
@@ -54,12 +85,15 @@ const showResults = ref<boolean>(false);
             <!-- Search Results -->
             <div 
                 class="search-result" 
-                v-for="result in c.results" 
+                v-for="result in results" 
                 v-bind:id="result.name"
                 @click="visit(result.name)"
             >
-                <div class="search-result-title">r/{{ result.name }}</div>
+                <div class="search-result-title">{{ result.name }}</div>
                 <div class="search-result-subtitle">{{ result.description }}</div>
+            </div>
+            <div class="view-all">
+                <router-link to="/rings">View all rings</router-link>
             </div>
         </div>
     </div>
@@ -129,6 +163,27 @@ const showResults = ref<boolean>(false);
             .search-result-subtitle {
                 font-size: 0.9rem;
                 color: var(--color-search-results-subtitle);
+            }
+        }
+
+        .view-all {
+            display: flex;
+            color: var(--color-interaction);
+            justify-content: center;
+            align-items: center;
+            padding: 10px 0px;
+            margin-top: 8px;
+            border-bottom: 1px solid #ccc;
+            width: 100%;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            a {
+                color: var(--color-search-results-subtitle);
+                font-size: 0.9rem;
+                text-decoration: none;
             }
         }
     }

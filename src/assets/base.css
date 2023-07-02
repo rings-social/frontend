@@ -48,6 +48,9 @@
   --color-primary-hover: #4743aa;
   --color-button-text: #FFF;
 
+  /* Interaction */
+  --color-interaction: #1565C0;
+
   /* Errors */
   --color-error: #d81b1b;
   --color-error-soft: #ac575e;
