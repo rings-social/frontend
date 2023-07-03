@@ -18,6 +18,11 @@ let props = defineProps({
     singlePostView: {
         type: Boolean as PropType<boolean>,
         default: false,
+    },
+
+    multiRing: {
+        type: Boolean as PropType<boolean>,
+        default: false,
     }
 });
 

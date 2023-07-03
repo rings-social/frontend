@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import ActionButtonVue from '@/components/ActionButton.vue';
 import RingLink from '@/components/RingLink.vue';
 import type { Paginated, Ring } from '@/models/models';
 import { ref, type Ref } from 'vue';
@@ -34,6 +35,12 @@ fetchRings();
 <template>
 <h1>Rings</h1>
 
+<div class="actions">
+    <RouterLink to="/newRing" class="link">
+        <ActionButtonVue>Create new Ring</ActionButtonVue>
+    </RouterLink>
+</div>
+
 <table>
     <thead>
         <tr>
@@ -59,6 +66,15 @@ fetchRings();
 </template>
 
 <style lang="scss" scoped>
+div.actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+
+    .link {
+        text-decoration: none;
+    }
+}
 table {
     width: 100%;
     border-collapse: collapse;

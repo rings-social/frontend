@@ -53,6 +53,9 @@ loadPosts(useRouter().currentRoute.value);
                 <h2>
                     {{ ringName }}
                 </h2>
+                <p v-if="multiRing">
+                This is an example of a multi-ring. You can't create a new post here. Visit another ring to create a post. 
+                </p>
                 <div class="ring-actions">
                     <router-link 
                         v-if="!multiRing" :to="'/r/' + ringName + '/createPost'"
@@ -65,7 +68,7 @@ loadPosts(useRouter().currentRoute.value);
                 </div>
             </div>
             <div class="posts">
-                <SimplePostVue v-for="post in posts" :key="post.id" :post="post" :multiring="multiRing" />
+                <SimplePostVue v-for="post in posts" :key="post.id" :post="post" :multiRing="multiRing" />
             </div>
         </div>
         <div v-else-if="loadingError != null">
