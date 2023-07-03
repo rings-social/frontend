@@ -25,6 +25,11 @@ const router = createRouter({
       component: () => import('../views/RingsView.vue')
     },
     {
+      path: '/comments',
+      name: 'comments',
+      component: () => import('../views/CommentsView.vue'),
+    },
+    {
       path: '/createUser',
       name: 'create-user',
       component: () => import('../views/CreateUserView.vue'),

@@ -77,6 +77,7 @@ export type Comment = {
     author_id: string;
     author: Author;
     body: string;
+    post?: Post;
     ups: number;
     downs: number;
     score: number;

@@ -74,26 +74,35 @@ const login = () => {
   <!-- A social network header -->
   <header>
     <div class="wrapper">
-      <RouterLink to="/" class="logo">
-        <img src="/logo.svg" alt="Rings Social"/>
-      </RouterLink>
+      <div class="content-left">
+        <RouterLink to="/" class="logo">
+          <img src="/logo.svg" alt="Rings Social"/>
+        </RouterLink>
+
+        <div class="navigation">
+          <RouterLink to="/comments">Comments</RouterLink>
+          <RouterLink to="/rings">Rings</RouterLink>
+        </div>
+      </div>
 
       <SearchBar class="search-bar"/>
 
       <!-- User Profile Info -->
-      <div class="profile" v-if="userStore.user.value != null">
-        <span class="username">{{ userStore.user.value.username }}</span>
-        <ProfilePicture 
-          :username="userStore.user.value.username"
-          class="profile-picture"
-        />
-      </div>
-      <div class="user-creation" v-else-if="idToken != null">
-        <!-- Creating the profile -->
-        <ActionButton @click="$router.push('/createuser')">Create Profile</ActionButton>
-      </div>
-      <div class="login-area" v-else>
-        <ActionButton @click="login">Login</ActionButton>
+      <div class="content-right">
+        <div class="profile" v-if="userStore.user.value != null">
+          <span class="username">{{ userStore.user.value.username }}</span>
+          <ProfilePicture 
+            :username="userStore.user.value.username"
+            class="profile-picture"
+          />
+        </div>
+        <div class="user-creation" v-else-if="idToken != null">
+          <!-- Creating the profile -->
+          <ActionButton @click="$router.push('/createuser')">Create Profile</ActionButton>
+        </div>
+        <div class="login-area" v-else>
+          <ActionButton @click="login">Login</ActionButton>
+        </div>
       </div>
     </div>
   </header>
@@ -124,15 +133,40 @@ header {
     column-gap: 24px;
   }
 
-  .logo {
-    display: block;
-    height: 100%;
-    width: 40px;
-    height: 40px;
-    img {
+  .content-left {
+    display: flex;
+    flex-direction: row;
+    column-gap: 24px;
+    justify-content: space-between;
+    flex-grow: 1;
+
+    .logo {
+      display: block;
       height: 100%;
+      width: 40px;
+      height: 40px;
+      img {
+        height: 100%;
+      }
+      cursor: pointer;
     }
-    cursor: pointer;
+
+    .navigation {
+      display: flex;
+      margin: 0px 12px;
+      align-items: center;
+      column-gap: 24px;
+      flex-grow: 0.5;
+
+      a, a:visited {
+        color: var(--color-header-navigation-links);
+        text-decoration: none;
+
+        &.router-link-active {
+          color: var(--color-header-navigation-links-active);
+        }
+      }
+    }
   }
 
   .navbar {
@@ -142,14 +176,21 @@ header {
     gap: 20px;
   }
 
+  .content-right {
+    flex-direction: row;
+    flex-grow: 1;
+    justify-content: flex-end;
+  }
+
   .search-bar {
-    width: 80%;
+    flex-grow: 2;
     max-width: 600px;
   }
 
   .profile {
     display: flex;
     flex-direction: row;
+    justify-content: flex-end;
     align-items: center;
     column-gap: 12px;
 
@@ -167,10 +208,6 @@ header {
       cursor: pointer;
     }
   }
-
-  .login-area {
-
-  }
 }
 
 div.view {
@@ -186,6 +223,17 @@ div.view {
   height: 100%;
   max-width: 1200px;
 }
+
+@media screen and (max-width: 600px) {
+  header {
+    .content-left {
+      .navigation {
+        display: none;
+      }
+    }
+  }
+}
+
 
 @media screen and (max-width: 400px){
   header {

@@ -287,6 +287,13 @@ $authorLineHeight: 24px;
                 }
 
                 div.author {
+                    display: none;
+                    .post-divider {
+                        display: none;
+                    }
+                }
+
+                div.post-actions {
                     .post-divider {
                         display: none;
                     }

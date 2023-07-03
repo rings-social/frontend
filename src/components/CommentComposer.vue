@@ -69,6 +69,7 @@ const submit = async function () {
     row-gap: 10px;
 
     textarea {
+        border: 1px solid var(--color-comment-composer-border);
         border-radius: var(--generic-border-radius);
         padding: var(--generic-padding);
     }

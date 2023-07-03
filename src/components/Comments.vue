@@ -4,12 +4,9 @@ import { computed, ref, type PropType, type Ref } from 'vue';
 import { DateTime } from 'luxon';
 import VoteContainer from './VoteContainer.vue';
 import UserLink from './UserLink.vue';
-import { marked } from 'marked';
-import createDOMPrufiy from 'dompurify';
 import CommentComposer from './CommentComposer.vue';
 import { useUserStore } from '@/stores/user';
 import RenderedMarkdown from './RenderedMarkdown.vue';
-import { useIntersectionObserver } from '@vueuse/core';
 
 const showComposer: Ref<Boolean> = ref(false);
 const props = defineProps({
@@ -20,6 +17,10 @@ const props = defineProps({
     depth: {
         type: Number,
         default: 0,
+    },
+    singleCommentView: {
+        type: Boolean as PropType<boolean>,
+        default: false,
     }
 });
 
@@ -129,7 +130,17 @@ const voteDown = async (comment: Comment) => {
                             :admin="comment.author.admin"
                             class="comment-author"/>
                         <div class="comment-divider">•</div>
-                        <div class="comment-date">{{ DateTime.fromISO(comment.createdAt).toRelative() }}</div>
+                        <RouterLink :to="`/r/${comment.post?.ringName}/${comment.post_id}/${comment.id}`" class="comment-date">
+                            {{ DateTime.fromISO(comment.createdAt).toRelative() }}
+                        </RouterLink>
+                        <div class="comment-divider" v-if="singleCommentView">•</div>
+                        <RouterLink 
+                            class="comment-post-title"
+                            v-if="singleCommentView"
+                            :to="`/r/${comment.post?.ringName}/${comment.post_id}`"
+                        >
+                        {{ comment.post?.title }}
+                        </RouterLink>
                     </div>
                     <div class="comment-body">
                         <RenderedMarkdown :markdown="comment.body" />
@@ -181,6 +192,7 @@ const voteDown = async (comment: Comment) => {
 .comments {
     display: flex;
     flex-direction: column;
+
     .comment {
         display: flex;
         flex-direction: column;
@@ -238,6 +250,28 @@ const voteDown = async (comment: Comment) => {
                     font-size: 0.8rem;
                     column-gap: 10px;
                     margin-bottom: 8px;
+
+                    .comment-date {
+                        color: var(--color-dimmed);
+                        transition: color 0.15s ease-in-out;
+                        cursor: pointer;
+                        &:hover {
+                            color: var(--color-dimmed-hover);
+                            text-decoration: underline;
+                        }
+                        text-decoration: none;
+                    }
+
+                    .comment-post-title {
+                        color: var(--color-dimmed);
+                        transition: color 0.15s ease-in-out;
+                        cursor: pointer;
+                        &:hover {
+                            color: var(--color-dimmed-hover);
+                            text-decoration: underline;
+                        }
+                        text-decoration: none;
+                    }
                 }
 
                 .comment-actions {

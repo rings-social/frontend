@@ -76,6 +76,7 @@
   --color-user: #0e9e62;
   --color-admin: #d81b1b;
   --color-dimmed: #8c8c8c;
+  --color-dimmed-hover: #6c6c6c;
 
   --color-button-background: #1565C0;
   --color-button-text: #FFF;
@@ -98,6 +99,7 @@
   /* Comment */
   --color-comment-actions: #868686;
   --color-comment-vertical-line: #cecece;
+  --color-comment-composer-border: #cecece;
 
   /* Comment Content */
   --code-inline-padding: 4px 8px;
@@ -133,6 +135,10 @@
     --color-search-results-border: var(--vt-c-divider-dark-1);
     --color-search-results-background: var(--vt-c-black-soft);
 
+    --color-header-navigation-links: var(--vt-c-text-dark-2);
+    --color-header-navigation-links-hover: var(--vt-c-text-dark-2);
+    --color-header-navigation-links-active: var(--vt-c-text-dark-1);
+
     /* Post */
     --color-post-background: var(--vt-c-black-soft);
     --color-action-comment: #3d85d6;
@@ -147,6 +153,12 @@
     --color-comment-vertical-line: #414040;
     --color-code-background: #1b1b1b;
 
+  }
+}
+
+@media screen and (max-width: 768px) {
+  :root {
+    --comment-padding: 8px;
   }
 }
 
