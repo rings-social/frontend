@@ -107,7 +107,7 @@ const voteDown = async (comment: Comment) => {
             :key="comment.post_id + '_' + comment.id" 
             class="comment" 
             :class="{
-            'comment-depth-0': comment.depth == 0,
+            'comment-depth-0': depth == 0,
             }"
         >
             <div class="comment-content">

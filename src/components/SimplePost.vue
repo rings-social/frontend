@@ -2,12 +2,13 @@
 import { ref, type PropType, type Ref, computed } from 'vue';
 import type { SimplePost } from '@/models/models';
 import { DateTime } from 'luxon';
-import type { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import RingLink from './RingLink.vue';
 import VoteContainer from './VoteContainer.vue';
 import UserLink from './UserLink.vue';
 import ProfilePicture from './ProfilePicture.vue';
 import RenderedMarkdown from './RenderedMarkdown.vue';
+import router from '@/router';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 let props = defineProps({
     post: {
@@ -27,16 +28,25 @@ let c = computed(() => {
     }
 });
 
+const rootElement = ref(null);
+const rightElement = ref(null);
+
+const visitStory = (event: MouseEvent) => {
+    if(event.target == rootElement.value || event.target == rightElement.value) {
+        router.push(`/r/${props.post.ringName}/${props.post.id}`);
+    }
+}
+
 </script>
 
 <template>
-    <div class="post">
+    <div class="post" @click="visitStory" ref="rootElement">
         <div class="post-left">
             <!-- Upvote / Downvote area, in a stylish way -->
             <VoteContainer :score="post.score"/>
         </div>
 
-        <div class="post-right">
+        <div class="post-right" ref="rightElement">
             <div v-if="post.link != null" class="post-title-container">
                 <a 
                     :href="post.link" class="post-link" target="_blank"
@@ -81,28 +91,25 @@ let c = computed(() => {
                     <span class="post-date" :alt="c.postedOnYmd">{{ c.postedOn }}</span>
                 </div>
                 <span class="nsfw-tag" v-if="post.nsfw">NSFW</span>
+                <div class="post-actions element-divider" v-if="!singlePostView">
+                    <span class="post-divider">•</span>
+                    <span class="post-action">
+                    <RouterLink :to="`/r/${post.ringName}/${post.id}`">
+                        <FontAwesomeIcon class="icon" :icon="['fas', 'message']" />
+                        <span class="post-action-text">{{ post.commentsCount }}</span>
+                    </RouterLink></span>
+                </div>
             </div>
 
             <div class="post-body" v-if="post.body != null">
                 <RenderedMarkdown :markdown="post.body" />
             </div>
-
-            <div class="post-footer-divider" v-if="!singlePostView"></div>
-
-            <div class="post-actions" v-if="!singlePostView">
-                <RouterLink 
-                    :to="`/r/${post.ringName}/${post.id}`" 
-                    class="action action-comment"
-                >
-                    <font-awesome-icon class="icon" :icon="['fas', 'message']" />
-                    <span class="action-text">{{ post.commentsCount }}</span>
-                </RouterLink>
-            </div>
         </div>
 
-        <div class="post-image">
-            <img :src="`https://picsum.photos/seed/${post.id}/200/300`" alt="Post Image">
-        </div>
+        <img 
+            :src="`https://picsum.photos/seed/${post.id}/200/300`"
+            class="post-image"
+            alt="Post Image">
     </div>
 </template>
 
@@ -120,31 +127,29 @@ $authorLineHeight: 24px;
     padding: var(--generic-padding);
     border-radius: var(--generic-border-radius);
     overflow: hidden;
+    max-height: 250px;
+
+    align-items: center;
 
 
     .post-image {
-        display: flex;
-        width: 150px;
-        max-height: 100px;
-        border-radius: 5px;
-        overflow: hidden;
-        img {
-            object-fit: cover;
-            height: 100%;
-            width: 100%;
-        }
+        height: 80px;
+        width: 80px;
+        flex-shrink: 1;
+        object-fit: cover;
     }
 
     .post-right {
         flex: 1;
+        justify-content: flex-start;
     }
 
     .post-left {
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        width: 50px;
+        justify-content: flex-start;
+        width: 35px;
     }
 
     .post-footer-divider {
@@ -187,35 +192,24 @@ $authorLineHeight: 24px;
                 }
             }
         }
+    }
 
-        .post-actions {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            column-gap: 10px;
+    .post-actions {
+        .post-action {
 
-            .action {
-                cursor: pointer;
-                padding: 4px 8px;
-                border-radius: 5px;
-                font-size: 1em;
-                user-select: none;
-                text-decoration: none;
-            }
-
-            .action-comment {
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                column-gap: 8px;
-
+            a {
                 color: var(--color-action-comment);
- 
+                text-decoration: none;
+
                 &:hover {
-                    background-color: var(--color-action-comment);
-                    color: var(--color-action-text-hover);
+                    text-decoration: underline;
+                }
+
+                .icon {
+                    margin-right: 6px;
                 }
             }
+    
         }
     }
 

@@ -49,15 +49,13 @@ const emit = defineEmits(['voteUp', 'voteDown']);
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    margin-top: 4px;
 
     &.vote-container-small {
         margin-top: 0;
     }
 
     &.vote-container-large {
-        margin-top: 4px;
-        row-gap: 8px;
+        row-gap: 2px;
     }
 
     .vote-up,

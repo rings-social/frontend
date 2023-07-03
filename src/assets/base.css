@@ -24,8 +24,8 @@
 
 /* semantic color variables for this project */
 :root {
-  --generic-padding: 16px 16px;
-  --comment-padding: 25px;
+  --generic-padding: 10px 10px;
+  --comment-padding: 16px 24px;
   --generic-column-gap: 18px;
   --generic-border: 1px solid #e6e6e6;
   --generic-border-radius: 8px;
@@ -68,7 +68,7 @@
   --color-link-visited: #6a2996;
 
 
-  --color-action-comment: #1565C0;
+  --color-action-comment: #2378c7;
   --color-action-comment-border: #0871eb;
 
   --color-action-text-hover: #FFF;
@@ -135,7 +135,7 @@
 
     /* Post */
     --color-post-background: var(--vt-c-black-soft);
-    --color-action-comment: #4099fd;
+    --color-action-comment: #3d85d6;
     --color-action-comment-border: #2c80e0;
     --color-post-divider: #353535;
     --color-post-type-text-title: #a1a1a1;
