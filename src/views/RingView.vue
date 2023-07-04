@@ -5,6 +5,7 @@ import SimplePostVue from '@/components/SimplePost.vue';
 import ErrorBox from '@/components/ErrorBox.vue';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter, type RouteLocationNormalized } from 'vue-router';
 import ActionButtonVue from '@/components/ActionButton.vue';
+import { getHeaders } from '@/utils/headers';
 
 let loaded: Ref<boolean> = ref(false);
 let posts: Ref<Array<SimplePost>> = ref([]);
@@ -36,7 +37,9 @@ function loadPosts(to: RouteLocationNormalized){
             multiRing.value = false;
     }
 
-    fetch(window._settings.baseUrl + '/r/' + ringName.value + '/posts')
+    fetch(window._settings.baseUrl + '/r/' + ringName.value + '/posts', {
+        headers: getHeaders(),
+    })
         .then((response: { json: () => any; }) => response.json())
         .then((data: SimplePost[]) => posts.value = data)
         .then(() => loaded.value = true)

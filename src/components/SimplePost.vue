@@ -9,6 +9,7 @@ import ProfilePicture from './ProfilePicture.vue';
 import RenderedMarkdown from './RenderedMarkdown.vue';
 import router from '@/router';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { getHeaders } from '@/utils/headers';
 
 let props = defineProps({
     post: {
@@ -37,9 +38,55 @@ const rootElement = ref(null);
 const rightElement = ref(null);
 
 const visitStory = (event: MouseEvent) => {
-    if(event.target == rootElement.value || event.target == rightElement.value) {
+    if (event.target == rootElement.value || event.target == rightElement.value) {
         router.push(`/r/${props.post.ringName}/${props.post.id}`);
     }
+}
+
+const sendVoteRequest = async (voteAction: 'upvote' | 'downvote') => {
+    return await fetch(`${window._settings.baseUrl}/posts/${props.post.id}/${voteAction}`, {
+        method: 'PUT',
+        headers: getHeaders(),
+    })
+}
+
+const voteUp = async () => {
+    if (props.post.votedUp) {
+        return;
+    }
+
+    // Send upvote request
+    sendVoteRequest('upvote').then((res) => {
+        if (res.status == 202) {
+            if (props.post.votedDown) {
+                props.post.score += 2;
+            } else {
+                props.post.score += 1;
+            }
+            props.post.votedUp = true;
+            props.post.votedDown = false;
+        }
+    })
+
+}
+
+const voteDown = () => {
+    if (props.post.votedDown) {
+        return;
+    }
+
+    // Send downvote request
+    sendVoteRequest('downvote').then((res) => {
+        if (res.status == 202) {
+            if (props.post.votedUp) {
+                props.post.score -= 2;
+            } else {
+                props.post.score -= 1;
+            }
+            props.post.votedUp = false;
+            props.post.votedDown = true;
+        }
+    })
 }
 
 </script>
@@ -48,23 +95,19 @@ const visitStory = (event: MouseEvent) => {
     <div class="post" @click="visitStory" ref="rootElement">
         <div class="post-left">
             <!-- Upvote / Downvote area, in a stylish way -->
-            <VoteContainer :score="post.score"/>
+            <VoteContainer :score="post.score" :voted-up="post.votedUp" :voted-down="post.votedDown" @vote-up="voteUp"
+                @vote-down="voteDown" />
         </div>
 
         <div class="post-right" ref="rightElement">
             <div v-if="post.link != null" class="post-title-container">
-                <a 
-                    :href="post.link" class="post-link" target="_blank"
-                >
+                <a :href="post.link" class="post-link" target="_blank">
                     <span class="post-title">{{ post.title }}</span>
                 </a>
             </div>
             <div v-else class="post-title-container">
-                <RouterLink 
-                    :to="`/r/${post.ringName}/${post.id}`" 
-                    class="post-text"
-                >
-                <span class="post-title">{{ post.title }}</span>
+                <RouterLink :to="`/r/${post.ringName}/${post.id}`" class="post-text">
+                    <span class="post-title">{{ post.title }}</span>
                 </RouterLink>
             </div>
             <div class="post-metadata">
@@ -73,22 +116,13 @@ const visitStory = (event: MouseEvent) => {
                     <span class="post-divider">•</span>
                 </div>
                 <div class="ring element-divider" v-if="props.singlePostView">
-                    <RingLink 
-                        :name="post.ringName"
-                        :color="post.ringColor"
-                    ></RingLink>
+                    <RingLink :name="post.ringName" :color="post.ringColor"></RingLink>
                     <span class="post-divider">•</span>
                 </div>
                 <div class="author element-divider">
                     <div class="author-content">
-                        <ProfilePicture
-                            :username="post.authorUsername"
-                            class="post-author-profile-picture"
-                        />
-                        <UserLink 
-                            :username="post.authorUsername" 
-                            :admin="post.author.admin"
-                            class="post-author-username"/>
+                        <ProfilePicture :username="post.authorUsername" class="post-author-profile-picture" />
+                        <UserLink :username="post.authorUsername" :admin="post.author.admin" class="post-author-username" />
                     </div>
                     <span class="post-divider">•</span>
                 </div>
@@ -99,25 +133,21 @@ const visitStory = (event: MouseEvent) => {
                 <div class="post-actions element-divider" v-if="!singlePostView">
                     <span class="post-divider">•</span>
                     <span class="post-action">
-                    <RouterLink :to="`/r/${post.ringName}/${post.id}`">
-                        <FontAwesomeIcon class="icon" :icon="['fas', 'message']" />
-                        <span class="post-action-text">{{ post.commentsCount }}</span>
-                    </RouterLink></span>
+                        <RouterLink :to="`/r/${post.ringName}/${post.id}`">
+                            <FontAwesomeIcon class="icon" :icon="['fas', 'message']" />
+                            <span class="post-action-text">{{ post.commentsCount }}</span>
+                        </RouterLink>
+                    </span>
                 </div>
             </div>
 
-            <div class="post-body" v-if="post.body != null"
-                :class="{'faded': !singlePostView}"
-            >
+            <div class="post-body" v-if="post.body != null" :class="{ 'faded': !singlePostView }">
                 <div class="faded-overlay" v-if="!singlePostView"></div>
                 <RenderedMarkdown :markdown="post.body" />
             </div>
         </div>
 
-        <img 
-            :src="`https://picsum.photos/seed/${post.id}/200/300`"
-            class="post-image"
-            alt="Post Image">
+        <img :src="`https://picsum.photos/seed/${post.id}/200/300`" class="post-image" alt="Post Image">
     </div>
 </template>
 
@@ -129,7 +159,7 @@ $authorLineHeight: 24px;
     flex-direction: row;
     width: 100%;
     column-gap: var(--generic-column-gap);
-    
+
     background-color: var(--color-post-background);
     border: var(--generic-border);
     padding: var(--generic-padding);
@@ -183,7 +213,7 @@ $authorLineHeight: 24px;
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(to bottom, rgba(255,255,255,0) 0%,var(--color-post-background) 100%);
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, var(--color-post-background) 100%);
         }
 
     }
@@ -198,7 +228,7 @@ $authorLineHeight: 24px;
             font-size: 20px;
             line-height: 20px;
             margin-bottom: 8px;
-            
+
             span {
                 font-weight: bold;
             }
@@ -234,7 +264,7 @@ $authorLineHeight: 24px;
                     margin-right: 6px;
                 }
             }
-    
+
         }
     }
 
@@ -304,7 +334,7 @@ $authorLineHeight: 24px;
         .post-left {
             margin-right: 8px;
         }
-        
+
         .post-right {
             .post-metadata {
                 div.date {
@@ -313,6 +343,7 @@ $authorLineHeight: 24px;
 
                 div.author {
                     display: none;
+
                     .post-divider {
                         display: none;
                     }

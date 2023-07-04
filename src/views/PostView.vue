@@ -2,12 +2,11 @@
 import Comments from '@/components/Comments.vue';
 import type { Post, Comment, SimplePost } from '@/models/models';
 import { DateTime } from 'luxon';
-import { ref, computed } from 'vue';
+import { ref, computed, type Ref } from 'vue';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter, type RouteLocationNormalized } from 'vue-router';
 import SimplePostVue from '@/components/SimplePost.vue';
 import CommentComposer from '@/components/CommentComposer.vue';
 import ErrorBox from '@/components/ErrorBox.vue';
-import { useUserStore } from '@/stores/user';
 import { getHeaders } from '@/utils/headers';
 
 
@@ -26,8 +25,6 @@ onBeforeRouteLeave(async (to, from, next) => {
     post.value = null;
     next();
 });
-
-const { idToken } = useUserStore();
 
 async function loadComments(postId: string, postData: Post){
     const commentsResponse = await fetch(
@@ -52,11 +49,33 @@ async function loadComments(postId: string, postData: Post){
 async function loadPost(to: RouteLocationNormalized){
     let postId = to.params.postId as string;
     try {
-        const postResponse = await fetch(`${window._settings.baseUrl}/posts/${postId}`);
+        const postResponse = await fetch(`${window._settings.baseUrl}/posts/${postId}`, 
+        {
+            headers: getHeaders(),
+        });
 
         if(postResponse.status == 200){
             const postData: Post = await postResponse.json();
             post.value = postData;
+            simplePost.value = {
+                id: post.value.id,
+                createdAt: post.value.createdAt,
+                ringName: post.value.ring.name,
+                ringColor: post.value.ring.primaryColor,
+                authorUsername: post.value.author.username,
+                author: post.value.author,
+                title: post.value.title,
+                body: post.value.body,
+                link: post.value.link,
+                domain: post.value.domain,
+                score: post.value.score,
+                commentsCount: post.value.commentsCount,
+                ups: post.value.ups,
+                downs: post.value.downs,
+                nsfw: post.value.nsfw,
+                votedUp: post.value.votedUp,
+                votedDown: post.value.votedDown,
+            } as SimplePost;
 
             await loadComments(postId, postData);
         } else {
@@ -71,28 +90,12 @@ async function loadPost(to: RouteLocationNormalized){
 
 loadPost(useRouter().currentRoute.value);
 
+const simplePost: Ref<SimplePost|null> = ref(null);
+
 let c = computed(() => {
     return {
         postedOn: post.value ? DateTime.fromISO(post.value.createdAt).toRelative(): '',
         postedOnYmd: post.value ? DateTime.fromISO(post.value.createdAt).toLocaleString(DateTime.DATETIME_MED): '',
-        simplePost: post.value ? {
-            id: post.value.id,
-            createdAt: post.value.createdAt,
-            ringName: post.value.ring.name,
-            ringColor: post.value.ring.primaryColor,
-            authorUsername: post.value.author.username,
-            author: post.value.author,
-            title: post.value.title,
-            body: post.value.body,
-            link: post.value.link,
-            domain: post.value.domain,
-            score: post.value.score,
-            commentsCount: post.value.commentsCount,
-            ups: post.value.ups,
-            downs: post.value.downs,
-            nsfw: post.value.nsfw,
-
-        } as SimplePost: null,
     }
 });
 
@@ -109,11 +112,11 @@ const newComment = () => {
   
 
 <template>
-    <div class="post" v-if="c.simplePost != null">
+    <div class="post" v-if="simplePost != null">
         <SimplePostVue 
-            :post="c.simplePost" 
+            :post="simplePost" 
             :singlePostView="true"
-            :multiring="false" v-if="c.simplePost != null" />
+            :multiring="false" v-if="simplePost != null" />
 
         <!-- The post's comments -->
         <h3>Comments ({{ numberOfComments }})</h3>
@@ -126,7 +129,7 @@ const newComment = () => {
 
         <!-- Comment composer -->
 
-        <CommentComposer :postId="c.simplePost.id" @comment="addComment($event)"/>
+        <CommentComposer :postId="simplePost.id" @comment="addComment($event)"/>
     </div>
     <div class="post-error" v-else-if="loadingError != null">
         <ErrorBox :loadingError="loadingError"/>

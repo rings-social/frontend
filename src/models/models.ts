@@ -65,6 +65,9 @@ export type SimplePost = {
     ups: number;
     downs: number;
     nsfw: boolean;
+
+    votedUp: boolean;
+    votedDown: boolean;
 };
 
 export type Comment = {
@@ -106,4 +109,7 @@ export type Post = {
     ups: number;
     downs: number;
     nsfw: boolean;
+
+    votedUp: boolean;
+    votedDown: boolean;
 };
