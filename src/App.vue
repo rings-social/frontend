@@ -237,7 +237,6 @@ header {
       justify-content: flex-end;
       align-items: center;
       column-gap: 12px;
-      width: 200px;
 
 
       .profile-menu-arrow {
@@ -263,6 +262,7 @@ header {
         align-content: center;
         row-gap: 8px;
         z-index: 300;
+        min-width: 200px;
 
         .user-link {
           text-align: center;

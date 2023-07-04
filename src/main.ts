@@ -28,6 +28,7 @@ import type { Settings } from './models/settings';
 import App from './App.vue'
 import router from './router'
 import { createAuth0 } from '@auth0/auth0-vue';
+import { faGithub, faReddit, faTelegram, faTwitter } from '@fortawesome/free-brands-svg-icons';
 
 const app = createApp(App)
 app.component('font-awesome-icon', FontAwesomeIcon)
@@ -43,7 +44,12 @@ library.add(faCircleNotch);
 library.add(faRing);
 library.add(faMessage);
 library.add(faTrash);
-library.add(faCaretUp)
+library.add(faCaretUp);
+
+library.add(faTwitter);
+library.add(faTelegram);
+library.add(faGithub);
+library.add(faReddit);
 
 
 
