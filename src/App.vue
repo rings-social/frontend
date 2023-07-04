@@ -8,6 +8,7 @@ import { useAuth0 } from '@auth0/auth0-vue';
 import { ref, watch } from 'vue';
 import type { User } from './models/models';
 import router from './router';
+import UserLink from './components/UserLink.vue';
 const { loginWithRedirect,
   getAccessTokenSilently,
   logout,
@@ -130,6 +131,11 @@ const doLogout = () => {
             <font-awesome-icon icon="caret-up" />
           </div>
           <div class="profile-menu" v-if="profileMenuOpen">
+            <UserLink 
+              :username="userStore.user.value.username" 
+              :admin="userStore.user.value.admin"
+              class="user-link"
+            />
             <ActionButton @click="visitProfile" :secondary="true">Profile</ActionButton>
             <ActionButton @click="doLogout" :secondary="true">Logout</ActionButton>
           </div>
@@ -254,8 +260,13 @@ header {
         padding: 8px;
         display: flex;
         flex-direction: column;
+        align-content: center;
         row-gap: 8px;
         z-index: 300;
+
+        .user-link {
+          text-align: center;
+        }
       }
 
       .profile-menu-button {
