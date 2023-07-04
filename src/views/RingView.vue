@@ -53,12 +53,14 @@ loadPosts(useRouter().currentRoute.value);
     <div class="ring">
         <div class="ring-content" v-if="loaded">
             <div class="ring-topbar">
-                <h2>
-                    {{ ringName }}
-                </h2>
-                <p v-if="multiRing">
-                This is an example of a multi-ring. You can't create a new post here. Visit another ring to create a post. 
-                </p>
+                <div class="title-info">
+                    <h2>
+                        {{ ringName }}
+                    </h2>
+                    <p v-if="multiRing">
+                    This is an example of a multi-ring. You can't create a new post here. Visit another ring to create a post. 
+                    </p>
+                </div>
                 <div class="ring-actions">
                     <router-link 
                         v-if="!multiRing" :to="'/r/' + ringName + '/createPost'"
@@ -94,7 +96,7 @@ loadPosts(useRouter().currentRoute.value);
         flex-direction: row;
 
 
-        h2 {
+        .title-info {
             flex-grow: 1;
         }
         
