@@ -106,7 +106,10 @@ const visitStory = (event: MouseEvent) => {
                 </div>
             </div>
 
-            <div class="post-body" v-if="post.body != null">
+            <div class="post-body" v-if="post.body != null"
+                :class="{'faded': !singlePostView}"
+            >
+                <div class="faded-overlay" v-if="!singlePostView"></div>
                 <RenderedMarkdown :markdown="post.body" />
             </div>
         </div>
@@ -165,7 +168,24 @@ $authorLineHeight: 24px;
     }
 
     .post-body {
+        position: relative;
         margin-top: 10px;
+
+        &.faded {
+            max-height: 100px;
+            overflow: hidden;
+        }
+
+        div.faded-overlay {
+            position: absolute;
+            top: 50px;
+            min-height: 50px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(255,255,255,0) 0%,var(--color-post-background) 100%);
+        }
+
     }
 
 

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import router from '@/router';
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -9,12 +10,22 @@ const props = defineProps({
     size: {
         type: Number,
         default: 64,
-    }
+    },
+    redirectOnClick: {
+        type: Boolean,
+        default: true,
+    },
 });
 
 const profilePictureUrl = computed(() => {
     return `${window._settings.baseUrl}/users/${props.username}/profilePicture`;
 });
+
+const handleClick = () => {
+    if(props.redirectOnClick){
+        router.push(`/u/${props.username}`);
+    }
+}
 </script>
 
 <template>
@@ -25,7 +36,7 @@ const profilePictureUrl = computed(() => {
         :width="size"
         :height="size"
         draggable="false"
-        @click="$router.push(`/u/${username}`)"
+        @click="handleClick"
     />
 </template>
 

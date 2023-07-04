@@ -5,15 +5,18 @@ import ProfilePicture from './components/ProfilePicture.vue';
 import { useUserStore } from './stores/user';
 import ActionButton from './components/ActionButton.vue';
 import { useAuth0 } from '@auth0/auth0-vue';
-import { watch } from 'vue';
+import { ref, watch } from 'vue';
 import type { User } from './models/models';
 import router from './router';
-const { loginWithRedirect, 
+const { loginWithRedirect,
   getAccessTokenSilently,
+  logout,
   user,
 } = useAuth0();
 const userStore = useUserStore();
 const { idToken } = userStore;
+const userStoreUser = userStore.user;
+const profileMenuOpen = ref(false);
 
 watch(user, async (newUser) => {
   if (newUser !== undefined) {
@@ -27,31 +30,35 @@ watch(user, async (newUser) => {
   }
 });
 
-const updateProfile = async() =>{
+watch(router.currentRoute, async (newRoute) => {
+  profileMenuOpen.value = false;
+});
+
+const updateProfile = async () => {
   const response = await fetch(`${window._settings.baseUrl}/users/me`, {
     headers: {
       Authorization: `Bearer ${userStore.idToken}`,
     },
   });
 
-  if(response.status == 200){
+  if (response.status == 200) {
     const user: User = await response.json();
     userStore.user.value = user;
-  } else if(response.status == 404){
+  } else if (response.status == 404) {
     // User doesn't exist, create it
     // Redirect to user creation page
     router.push('/createUser');
   }
 };
 
-if(idToken != null){
+if (idToken != null) {
   // Check idToken validity
   let token = idToken.replace('-', '+').replace('_', '/');
   let payload = JSON.parse(atob(token.split('.')[1]));
 
 
   let now = new Date();
-  if(now.getTime() > payload.exp * 1000){
+  if (now.getTime() > payload.exp * 1000) {
     console.log('Token is expired');
     // Token is expired
     userStore.idToken = null;
@@ -61,13 +68,35 @@ if(idToken != null){
 
 }
 
-if(userStore.idToken != null && !userStore.user.available) {
+if (userStore.idToken != null && !userStore.user.available) {
   updateProfile();
 }
 
 const login = () => {
   loginWithRedirect();
 }
+
+const toggleProfileMenu = () => {
+  profileMenuOpen.value = !profileMenuOpen.value;
+}
+
+const visitProfile = () => {
+  router.push(`/u/${userStore.user.value?.username}`);
+  profileMenuOpen.value = false;
+}
+
+const doLogout = () => {
+  userStoreUser.available = false;
+  userStoreUser.value = undefined;
+  userStore.idToken = null;
+
+  logout({
+    logoutParams: {
+      returnTo: window.location.origin,
+    }
+  });
+}
+
 </script>
 
 <template>
@@ -76,7 +105,7 @@ const login = () => {
     <div class="wrapper">
       <div class="content-left">
         <RouterLink to="/" class="logo">
-          <img src="/logo.svg" alt="Rings Social"/>
+          <img src="/logo.svg" alt="Rings Social" />
         </RouterLink>
 
         <div class="navigation">
@@ -85,16 +114,26 @@ const login = () => {
         </div>
       </div>
 
-      <SearchBar class="search-bar"/>
+      <SearchBar class="search-bar" />
 
       <!-- User Profile Info -->
       <div class="content-right">
         <div class="profile" v-if="userStore.user.value != null">
-          <span class="username">{{ userStore.user.value.username }}</span>
-          <ProfilePicture 
-            :username="userStore.user.value.username"
-            class="profile-picture"
-          />
+          <div class="profile-menu-button" @click="toggleProfileMenu">
+            <ProfilePicture 
+              :username="userStore.user.value.username" 
+              class="profile-picture"
+              :redirect-on-click="false"
+              />
+          </div>
+          <div class="profile-menu-arrow" v-if="profileMenuOpen">
+            <font-awesome-icon icon="caret-up" />
+          </div>
+          <div class="profile-menu" v-if="profileMenuOpen">
+            <ActionButton @click="visitProfile" :secondary="true">Profile</ActionButton>
+            <ActionButton @click="doLogout" :secondary="true">Logout</ActionButton>
+          </div>
+
         </div>
         <div class="user-creation" v-else-if="idToken != null">
           <!-- Creating the profile -->
@@ -129,7 +168,7 @@ header {
     justify-content: space-between;
     align-items: center;
     height: 100%;
-    padding: 20px;      
+    padding: 20px 24px;
     column-gap: 24px;
   }
 
@@ -145,9 +184,11 @@ header {
       height: 100%;
       width: 40px;
       height: 40px;
+
       img {
         height: 100%;
       }
+
       cursor: pointer;
     }
 
@@ -158,7 +199,8 @@ header {
       column-gap: 24px;
       flex-grow: 0.5;
 
-      a, a:visited {
+      a,
+      a:visited {
         color: var(--color-header-navigation-links);
         text-decoration: none;
 
@@ -177,36 +219,74 @@ header {
   }
 
   .content-right {
+    display: flex;
     flex-direction: row;
     flex-grow: 1;
     justify-content: flex-end;
+
+    .profile {
+      position: relative;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      align-items: center;
+      column-gap: 12px;
+      width: 200px;
+
+
+      .profile-menu-arrow {
+        position: absolute;
+        font-size: 20px;
+        top: calc(100% - 15px);
+        right: 15px;
+        color: var(--color-profile-menu-background);
+        z-index: 300;
+      }
+      .profile-menu {
+        position: absolute;
+        top: calc(100% + 3px);
+        right: 0;
+        width: 100%;
+
+        background-color: var(--color-profile-menu-background);
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 8px;
+        z-index: 300;
+      }
+
+      .profile-menu-button {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
+        column-gap: 12px;
+        width: 100%;
+      }
+
+      .profile-picture {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
   }
 
   .search-bar {
     flex-grow: 2;
     max-width: 600px;
-  }
-
-  .profile {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: center;
-    column-gap: 12px;
-
-    .profile-picture {
-      width: 40px;
-      height: 40px;
-      object-fit: cover;
-      img {
-        width: 100%;
-        height: 100%;
-      }
-    }
-
-    &:hover {
-      cursor: pointer;
-    }
   }
 }
 
@@ -235,17 +315,20 @@ div.view {
 }
 
 
-@media screen and (max-width: 400px){
+@media screen and (max-width: 400px) {
   header {
     $imageSize: 32px;
+
     .logo {
       width: $imageSize;
       height: $imageSize;
+
       img {
         width: $imageSize;
         height: $imageSize;
       }
     }
+
     .search-bar {
       justify-self: stretch;
     }
@@ -255,10 +338,10 @@ div.view {
         width: $imageSize;
         height: $imageSize;
       }
+
       .username {
         display: none;
       }
     }
   }
-}
-</style>
+}</style>

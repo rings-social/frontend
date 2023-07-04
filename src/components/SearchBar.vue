@@ -53,6 +53,11 @@ watch(query, () => {
     }
 });
 
+watch(router.currentRoute, () => {
+    query.value = '';
+    showResults.value = false;
+});
+
 function visit(name: string) {
     router.push(`/r/${name}`);
     query.value = '';

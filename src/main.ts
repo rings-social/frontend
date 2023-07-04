@@ -20,6 +20,7 @@ import {
     faRing,
     faMessage,
     faTrash,
+    faCaretUp,
 } from '@fortawesome/free-solid-svg-icons'
 
 import type { Settings } from './models/settings';
@@ -42,6 +43,7 @@ library.add(faCircleNotch);
 library.add(faRing);
 library.add(faMessage);
 library.add(faTrash);
+library.add(faCaretUp)
 
 
 

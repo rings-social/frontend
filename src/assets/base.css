@@ -86,6 +86,7 @@
   --color-search-icon: #ccc;
   --color-search-results-border: #ccc;
   --color-search-results-background: #FFF;
+  --color-profile-menu-background: var(--color-header-background);
 
   /* Post */
   --color-post-background: var(--vt-c-white);

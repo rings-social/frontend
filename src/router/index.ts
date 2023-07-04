@@ -20,6 +20,11 @@ const router = createRouter({
       component: () => import('../views/LoginView.vue')
     },
     {
+      path: '/login/callback',
+      name: 'login-callback',
+      component: () => import('../views/LoginCallbackView.vue')
+    },
+    {
       path: '/rings',
       name: 'rings',
       component: () => import('../views/RingsView.vue')
