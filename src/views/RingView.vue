@@ -78,7 +78,7 @@ load(useRouter().currentRoute.value);
                     <p class="ring-description">
                         {{  ring.description }}
                     </p>
-                    <p v-if="multiRing">
+                    <p v-if="multiRing" class="multi-ring-notice">
                     This is an example of a multi-ring. You can't create a new post here. Visit another ring to create a post. 
                     </p>
                 </div>
@@ -129,6 +129,11 @@ load(useRouter().currentRoute.value);
             .action-button {
                 text-decoration: none;
             }
+        }
+
+        .multi-ring-notice {
+            color: var(--color-dimmed);
+            margin-top: 14px;
         }
     }
     
