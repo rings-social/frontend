@@ -99,7 +99,19 @@ load(useRouter().currentRoute.value);
                 </div>
             </div>
             <div class="posts">
-                <SimplePostVue v-for="post in posts" :key="post.id" :post="post" :multiRing="multiRing" />
+                <SimplePostVue 
+                    v-for="post in posts" 
+                    :key="post.id" 
+                    :post="post" 
+                    :multiRing="multiRing" 
+                    v-if="posts.length > 0"
+                />
+
+                <div class="no-posts-yet" v-else>
+                    <p>
+                        No posts yet. Be the first to create one!
+                    </p>
+                </div>
             </div>
         </div>
         <div v-else-if="loadingError != null">
