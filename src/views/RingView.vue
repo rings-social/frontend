@@ -10,7 +10,7 @@ import { getHeaders } from '@/utils/headers';
 let loaded: Ref<boolean> = ref(false);
 
 let ring: Ref<Ring|null> = ref(null);
-let posts: Ref<Array<SimplePost>> = ref([]);
+let posts: Ref<Array<SimplePost>|null> = ref(null);
 let ringName: Ref<string> = ref('');
 let multiRing: Ref<boolean> = ref(false);
 const loadingError: Ref<string|null> = ref(null);
@@ -22,7 +22,7 @@ onBeforeRouteUpdate((to, from, next) => {
 });
 
 onBeforeRouteLeave((to, from, next) => {
-    posts.value = [];
+    posts.value = null;
     loaded.value = false
     ring.value = null;
     next();
@@ -61,6 +61,11 @@ async function loadPosts() {
     })
     .then((response: { json: () => any; }) => response.json())
     .then((data: SimplePost[]) => posts.value = data)
+    .then(() => {
+        if(posts.value == null){
+            posts.value = [];
+        }
+    })
     .catch((error: any) => loadingError.value = `Unable to fetch posts: ${error}`);
 }
 
