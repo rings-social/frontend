@@ -91,6 +91,10 @@ const loadRing = async () => {
 }
 
 const createPost = async () => {
+    if(!valid.value){
+        return;
+    }
+    
     const headers = getHeaders();
     headers['Content-Type'] = 'application/json';
     const response = await fetch(`${window._settings.baseUrl}/posts`, {
