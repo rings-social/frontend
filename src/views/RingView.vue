@@ -6,6 +6,7 @@ import ErrorBox from '@/components/ErrorBox.vue';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter, type RouteLocationNormalized } from 'vue-router';
 import ActionButtonVue from '@/components/ActionButton.vue';
 import { getHeaders } from '@/utils/headers';
+import router from '@/router';
 
 let loaded: Ref<boolean> = ref(false);
 
@@ -41,9 +42,15 @@ async function loadRing(){
     fetch(window._settings.baseUrl + '/r/' + ringName.value, {
         headers: getHeaders(),
     })
-        .then((response: { json: () => any; }) => response.json())
-        .then((data: Ring) => ring.value = data)
-        .catch((error: any) => loadingError.value = `Unable to fetch ring: ${error}`);
+    .then((response: Response) => {
+        if(response.status == 404){
+            router.push('/404');
+        }
+        return response;
+    })
+    .then((response: { json: () => any; }) => response.json())
+    .then((data: Ring) => ring.value = data)
+    .catch((error: any) => loadingError.value = `Unable to fetch ring: ${error}`);
 }
 
 async function loadPosts() {
