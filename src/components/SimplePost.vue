@@ -95,8 +95,12 @@ const voteDown = () => {
     <div class="post" @click="visitStory" ref="rootElement">
         <div class="post-left">
             <!-- Upvote / Downvote area, in a stylish way -->
-            <VoteContainer :score="post.score" :voted-up="post.votedUp" :voted-down="post.votedDown" @vote-up="voteUp"
-                @vote-down="voteDown" />
+            <VoteContainer :score="post.score" 
+                :voted-up="post.votedUp" 
+                :voted-down="post.votedDown" 
+                @vote-up="voteUp"
+                @vote-down="voteDown" 
+            />
         </div>
 
         <div class="post-right" ref="rightElement">
@@ -115,7 +119,7 @@ const voteDown = () => {
                     <span class="post-domain">{{ post.domain }}</span>
                     <span class="post-divider">•</span>
                 </div>
-                <div class="ring element-divider" v-if="props.singlePostView">
+                <div class="ring element-divider" v-if="props.singlePostView || multiRing">
                     <RingLink :name="post.ringName" :color="post.ringColor"></RingLink>
                     <span class="post-divider">•</span>
                 </div>
