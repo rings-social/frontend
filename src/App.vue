@@ -166,6 +166,7 @@ header {
   background-color: var(--color-header-background);
   height: 70px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  z-index: 300;
 
 
   .wrapper {
