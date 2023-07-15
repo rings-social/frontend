@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, type Ref } from 'vue';
-import type { SimplePost } from '@/models/models';
+import type { Ring, SimplePost } from '@/models/models';
 import SimplePostVue from '@/components/SimplePost.vue';
 import ErrorBox from '@/components/ErrorBox.vue';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter, type RouteLocationNormalized } from 'vue-router';
@@ -8,6 +8,8 @@ import ActionButtonVue from '@/components/ActionButton.vue';
 import { getHeaders } from '@/utils/headers';
 
 let loaded: Ref<boolean> = ref(false);
+
+let ring: Ref<Ring|null> = ref(null);
 let posts: Ref<Array<SimplePost>> = ref([]);
 let ringName: Ref<string> = ref('');
 let multiRing: Ref<boolean> = ref(false);
@@ -15,19 +17,36 @@ const loadingError: Ref<string|null> = ref(null);
 
 // We fetch posts from the API even when the user changes route (ring)
 onBeforeRouteUpdate((to, from, next) => {
-    loadPosts(to);
+    load(to);
     next();
 });
 
 onBeforeRouteLeave((to, from, next) => {
     posts.value = [];
     loaded.value = false
+    ring.value = null;
     next();
 });
 
-function loadPosts(to: RouteLocationNormalized){
+
+
+async function load(to: RouteLocationNormalized){
     ringName.value = to.params.ringName as string;
 
+    loadRing();
+    loadPosts();
+}
+
+async function loadRing(){ 
+    fetch(window._settings.baseUrl + '/r/' + ringName.value, {
+        headers: getHeaders(),
+    })
+        .then((response: { json: () => any; }) => response.json())
+        .then((data: Ring) => ring.value = data)
+        .catch((error: any) => loadingError.value = `Unable to fetch ring: ${error}`);
+}
+
+async function loadPosts() {
     switch(ringName.value) {
         case 'popular':
         case 'all':
@@ -40,23 +59,25 @@ function loadPosts(to: RouteLocationNormalized){
     fetch(window._settings.baseUrl + '/r/' + ringName.value + '/posts', {
         headers: getHeaders(),
     })
-        .then((response: { json: () => any; }) => response.json())
-        .then((data: SimplePost[]) => posts.value = data)
-        .then(() => loaded.value = true)
-        .catch((error: any) => loadingError.value = `Unable to fetch posts: ${error}`);
+    .then((response: { json: () => any; }) => response.json())
+    .then((data: SimplePost[]) => posts.value = data)
+    .catch((error: any) => loadingError.value = `Unable to fetch posts: ${error}`);
 }
 
-loadPosts(useRouter().currentRoute.value);
+load(useRouter().currentRoute.value);
 </script>
 
 <template>
     <div class="ring">
-        <div class="ring-content" v-if="loaded">
+        <div class="ring-content" v-if="ring != null && posts != null">
             <div class="ring-topbar">
                 <div class="title-info">
                     <h2>
                         {{ ringName }}
                     </h2>
+                    <p class="ring-description">
+                        {{  ring.description }}
+                    </p>
                     <p v-if="multiRing">
                     This is an example of a multi-ring. You can't create a new post here. Visit another ring to create a post. 
                     </p>
