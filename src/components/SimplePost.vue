@@ -290,6 +290,7 @@ $authorLineHeight: 24px;
         .post-image, .post-video {
             display: none;
             max-height: 500px;
+            width: 50%;
             margin-top: 14px;
             margin-bottom: 14px;
             align-self: flex-start;
